@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 3cc25b9 |
+| lens-core | 8a40e3f |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
