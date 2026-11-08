@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | fd1bf6b |
+| lens-core | 32f718c |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -31,6 +31,7 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 | lens-core | 7412b60 | lens-log: distribute via lizo-skills marketplace, enable per project | docs/BUILD.md |
 | lens-core | 03770fb | Roadmap: log-index-action done | ROADMAP.md, roadmap.yaml |
 | lens-core | f92618a | Roadmap: lens-log remaining defects done; install target 0.1.5 | ROADMAP.md, roadmap.yaml |
+| lens-core | 32f718c | Roadmap: spine-neutral-names and spine-one-table-choices done | ROADMAP.md, roadmap.yaml |
 
 ## Misses
 
