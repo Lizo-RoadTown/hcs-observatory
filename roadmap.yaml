@@ -197,9 +197,9 @@ items:
     outcome: lens-core stands up the standard on an empty Postgres from LENS_DB_URL, repeatably.
     horizon: now
     firmness: firm
-    status: proposed
+    status: in-progress
     owner: lens-core
-    depends_on: [review-promotion-contract, spine-security-defaults]
+    depends_on: [spine-security-defaults]
     exit_check: "lens-core new applies spine.sql twice to an empty database without error"
 
   # ---------- Phase C: each module derives and builds its own piece ----------

@@ -33,3 +33,9 @@ jobs:
         run: python scripts/roadmap.py check
       - name: Tests
         run: python -m pytest -q -rs tests
+      - name: Installed package finds its bundled standard
+        run: |
+          pip wheel . --no-deps -q -w dist
+          python -m venv /tmp/wheel-check
+          /tmp/wheel-check/bin/pip install -q dist/*.whl
+          cd /tmp && /tmp/wheel-check/bin/lens-core version

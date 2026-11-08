@@ -173,3 +173,10 @@ def test_a_decision_cannot_be_borrowed_from_another_candidate(db):
     dec = _decide(db, other, "accept")
     with pytest.raises(Exception):
         _verify(db, cand, dec)
+
+
+def test_revoke_block_lists_exactly_the_spine_tables():
+    # The guarded revoke for hosted API roles is a hand-written list; keep it in step.
+    block = re.search(r"FOREACH t IN ARRAY ARRAY\[(.*?)\]", SQL, re.S).group(1)
+    listed = re.findall(r"'(\w+)'", block)
+    assert listed == tables(SQL)

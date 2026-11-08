@@ -20,8 +20,12 @@
 -- Groups of people (organizations, members, roles) belong to the access + tenancy module
 -- (pr-007), not the spine.
 --
--- Requires PostgreSQL 13 or later (gen_random_uuid is built in). Safe to apply more than
--- once.
+-- Requires PostgreSQL 13 or later (gen_random_uuid is built in). Safe to apply to an empty
+-- database more than once. Apply it with `lens-core new`, which records the version below
+-- and does not re-apply it to a lab already at this version: re-running the security
+-- defaults on a live lab would remove grants that the access + tenancy module added.
+--
+-- lens-standard-version: 0.1.0
 
 -- ---------------------------------------------------------------------------
 -- Lineage: where a candidate came from, kept separate from the claim itself.
@@ -178,12 +182,29 @@ CREATE TABLE IF NOT EXISTS oversight_trust_history (
 );
 
 -- ---------------------------------------------------------------------------
+-- Which version of this standard a lab is on. Written by `lens-core new`.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS standard_version (
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    version     text NOT NULL UNIQUE,
+    applied_at  timestamptz NOT NULL DEFAULT now()
+);
+
+-- ---------------------------------------------------------------------------
 -- Security defaults: every table starts closed.
 -- Row security is on with no policies, so an ordinary role sees no rows even if it is
--- granted access by mistake; nothing is granted to PUBLIC. Hosts that grant new tables
--- to API roles by default (Supabase's anon and authenticated) have those grants removed.
+-- granted access by mistake. Hosts that grant new tables to API roles by default
+-- (Supabase's anon and authenticated) have those grants removed after creation.
 -- Policies and grants for real users come from the access + tenancy module (pr-007).
--- There are no triggers in the standard.
+--
+-- Notes:
+--   * Table owners, superusers and roles with BYPASSRLS (for example a host's service
+--     role) skip row security by design; keep their credentials server-side.
+--   * Tables get no PUBLIC privileges by default; the REVOKE FROM PUBLIC lines record the
+--     intent. The schema's own PUBLIC usage is left to the host.
+--   * The standard defines no functions or triggers. A module that adds a function must
+--     revoke EXECUTE from PUBLIC (and from anon and authenticated) itself.
+--   * Tables a module adds later are that module's to close the same way.
 -- ---------------------------------------------------------------------------
 ALTER TABLE sources ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON sources FROM PUBLIC;
@@ -203,6 +224,8 @@ ALTER TABLE oversight_proposals ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON oversight_proposals FROM PUBLIC;
 ALTER TABLE oversight_trust_history ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON oversight_trust_history FROM PUBLIC;
+ALTER TABLE standard_version ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON standard_version FROM PUBLIC;
 
 DO $$
 DECLARE
@@ -211,7 +234,7 @@ DECLARE
 BEGIN
     FOREACH r IN ARRAY ARRAY['anon', 'authenticated'] LOOP
         IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = r) THEN
-            FOREACH t IN ARRAY ARRAY['sources', 'candidates', 'decisions', 'verified', 'relationships', 'enrichments', 'oversight_capabilities', 'oversight_proposals', 'oversight_trust_history'] LOOP
+            FOREACH t IN ARRAY ARRAY['sources', 'candidates', 'decisions', 'verified', 'relationships', 'enrichments', 'oversight_capabilities', 'oversight_proposals', 'oversight_trust_history', 'standard_version'] LOOP
                 EXECUTE format('REVOKE ALL ON %I FROM %I', t, r);
             END LOOP;
         END IF;
