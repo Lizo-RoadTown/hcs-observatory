@@ -15,8 +15,8 @@
 -- is reconciled.
 --
 -- Not yet here (roadmap):
---   * the scope column on every table (spine-scope-column, loose);
---   * the review and promotion contract (review-promotion-contract);
+--   * the scope column on every table (spine-scope-column, loose). No uniqueness on
+--     canonical_key is declared yet, because scope changes what "unique" means.
 -- Groups of people (organizations, members, roles) belong to the access + tenancy module
 -- (pr-007), not the spine.
 --
@@ -67,23 +67,39 @@ CREATE TABLE IF NOT EXISTS decisions (
     reason        text,
     before        jsonb,
     after         jsonb,
-    created_at    timestamptz NOT NULL DEFAULT now()
+    created_at    timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (id, candidate_id, action)   -- lets verified point at one accept decision
 );
 
 -- ---------------------------------------------------------------------------
 -- Verified (the library): human-established truth, versioned.
--- Written by promotion (from an accepted candidate); read by serve.
+-- Written by promotion (lens-review owns that code); read by serve.
+--
+-- The review and promotion contract, enforced by the database: every verified entry
+-- names the candidate it came from and the decision that accepted it, and that decision
+-- must be an 'accept' on that same candidate. Imports follow the same path (record a
+-- candidate and an accept decision by the importer). The composite foreign key does this
+-- without triggers.
+--
+-- Not enforced here (no triggers; the writer's job, checked by lens-review's tests):
+--   * the candidate's status being 'accepted';
+--   * the accept being the latest decision on that candidate.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS verified (
-    id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    canonical_key  text NOT NULL,
-    kind           text NOT NULL,
-    payload        jsonb NOT NULL,
-    provenance     jsonb,               -- source and decision trail
-    is_current     boolean NOT NULL DEFAULT true,
-    superseded_by  uuid REFERENCES verified(id),
-    verified_by    text,
-    verified_at    timestamptz NOT NULL DEFAULT now()
+    id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    canonical_key    text NOT NULL,
+    kind             text NOT NULL,
+    payload          jsonb NOT NULL,
+    candidate_id     uuid NOT NULL,
+    decision_id      uuid NOT NULL,
+    decision_action  text NOT NULL DEFAULT 'accept' CHECK (decision_action = 'accept'),
+    provenance       jsonb,             -- further trail (sources, merged decisions)
+    is_current       boolean NOT NULL DEFAULT true,
+    superseded_by    uuid REFERENCES verified(id),
+    verified_by      text,
+    verified_at      timestamptz NOT NULL DEFAULT now(),
+    FOREIGN KEY (decision_id, candidate_id, decision_action)
+        REFERENCES decisions (id, candidate_id, action)
 );
 
 -- ---------------------------------------------------------------------------

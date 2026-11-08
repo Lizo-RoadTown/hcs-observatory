@@ -171,10 +171,10 @@ items:
 
   - id: review-promotion-contract
     title: Review and promotion contract
-    outcome: Candidate -> decision -> verified works, fixing the PROVES 009/011 and CHECK defects.
+    outcome: The database guarantees every verified entry traces to an accept decision on its own candidate (constraints only; lens-review owns promotion code).
     horizon: now
     firmness: firm
-    status: proposed
+    status: in-progress
     owner: lens-core
     depends_on: [spine-one-table-choices]
     touches_bus: [docs/schema/spine.sql]

@@ -72,9 +72,10 @@ def test_spine_applies_to_an_empty_database_twice(db):
 
 
 def test_relationships_and_enrichments_hang_off_verified(db):
-    db.execute(SQL)
-    a = db.execute("INSERT INTO verified (canonical_key, kind, payload) VALUES ('a','x','{}') RETURNING id").fetchone()[0]
-    b = db.execute("INSERT INTO verified (canonical_key, kind, payload) VALUES ('b','x','{}') RETURNING id").fetchone()[0]
+    _, ca = _seed(db)
+    a = _verify(db, ca, _decide(db, ca, "accept"))
+    cb = db.execute("INSERT INTO candidates (kind, payload) VALUES ('thing','{}') RETURNING id").fetchone()[0]
+    b = _verify(db, cb, _decide(db, cb, "accept"))
     db.execute("INSERT INTO relationships (from_id, to_id, kind, confidence) VALUES (%s,%s,'same_as',0.9)", (a, b))
     with pytest.raises(Exception):
         db.execute("INSERT INTO relationships (from_id, to_id, kind, confidence) VALUES (%s,%s,'same_as',0.5)", (a, b))
@@ -110,3 +111,65 @@ def test_hosted_roles_and_strangers_get_nothing(db):
             assert rls, f"row security is off on {name}"
     finally:
         db.execute("ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated")
+
+
+# ---- review-promotion-contract: every verified entry traces to an accept decision ----
+
+def _seed(db):
+    db.execute(SQL)
+    src = db.execute("INSERT INTO sources (uri) VALUES ('doc://a') RETURNING id").fetchone()[0]
+    cand = db.execute("INSERT INTO candidates (source_id, kind, payload) VALUES (%s,'thing','{}') "
+                      "RETURNING id", (src,)).fetchone()[0]
+    return src, cand
+
+
+def _decide(db, cand, action):
+    return db.execute("INSERT INTO decisions (candidate_id, action, actor) VALUES (%s,%s,'reviewer-1') "
+                      "RETURNING id", (cand, action)).fetchone()[0]
+
+
+def _verify(db, cand, dec):
+    return db.execute("INSERT INTO verified (canonical_key, kind, payload, candidate_id, decision_id, "
+                      "verified_by) VALUES ('k','thing','{}',%s,%s,'reviewer-1') RETURNING id",
+                      (cand, dec)).fetchone()[0]
+
+
+def test_contract_is_declared_in_the_sql():
+    assert re.search(r"UNIQUE \(id, candidate_id, action\)", SQL)
+    assert re.search(r"FOREIGN KEY \(decision_id, candidate_id, decision_action\)\s+REFERENCES "
+                     r"decisions \(id, candidate_id, action\)", SQL)
+    assert "CHECK (decision_action = 'accept')" in SQL
+
+
+def test_source_to_verified_through_an_accept(db):
+    _, cand = _seed(db)
+    dec = _decide(db, cand, "accept")
+    db.execute("UPDATE candidates SET status = 'accepted' WHERE id = %s", (cand,))
+    vid = _verify(db, cand, dec)
+    row = db.execute("SELECT v.id FROM verified v JOIN decisions d ON d.id = v.decision_id "
+                     "JOIN candidates c ON c.id = v.candidate_id JOIN sources s ON s.id = c.source_id "
+                     "WHERE v.id = %s AND d.action = 'accept'", (vid,)).fetchone()
+    assert row is not None
+
+
+def test_verified_needs_a_decision(db):
+    _, cand = _seed(db)
+    with pytest.raises(Exception):
+        db.execute("INSERT INTO verified (canonical_key, kind, payload, candidate_id) "
+                   "VALUES ('k','thing','{}',%s)", (cand,))
+
+
+def test_a_reject_cannot_be_promoted(db):
+    _, cand = _seed(db)
+    dec = _decide(db, cand, "reject")
+    with pytest.raises(Exception):
+        _verify(db, cand, dec)
+
+
+def test_a_decision_cannot_be_borrowed_from_another_candidate(db):
+    src, cand = _seed(db)
+    other = db.execute("INSERT INTO candidates (source_id, kind, payload) VALUES (%s,'thing','{}') "
+                       "RETURNING id", (src,)).fetchone()[0]
+    dec = _decide(db, other, "accept")
+    with pytest.raises(Exception):
+        _verify(db, cand, dec)
