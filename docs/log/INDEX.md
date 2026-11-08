@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 37fc2d9 |
+| lens-core | 6f45c72 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -38,11 +38,12 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (40)
+## Entries (41)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
-| 2026-11-07T19:20 | lens-core | process |  | Database tests refuse non-throwaway databases; CI fails if they skip | [2026-11-07-2159-db-test-guard.md](entries/2026-11-07-2159-db-test-guard.md) |
+| 2026-11-07T22:02 | lens-core | decision | bus, roadmap | Review and promotion contract: verified entries trace to an accept decision by foreign key | [2026-11-07-2202-review-promotion-contract.md](entries/2026-11-07-2202-review-promotion-contract.md) |
+| 2026-11-07T21:59 | lens-core | process |  | Database tests refuse non-throwaway databases; CI fails if they skip | [2026-11-07-2159-db-test-guard.md](entries/2026-11-07-2159-db-test-guard.md) |
 | 2026-11-07T19:01 | lens-core | decision | bus | Spine starts closed: row security on, no PUBLIC or hosted-API grants, no triggers | [2026-11-07-1901-spine-security-defaults.md](entries/2026-11-07-1901-spine-security-defaults.md) |
 | 2026-11-07T18:57 | lens-core | decision | bus, source, roadmap | Spine v1: neutral names and the five one-table choices | [2026-11-07-1857-spine-v1-names-and-one-table.md](entries/2026-11-07-1857-spine-v1-names-and-one-table.md) |
 | 2026-11-07T18:23 | lens-core | process | roadmap | lens-log installed globally (user scope) at 0.1.5 | [2026-11-07-1823-lens-log-global.md](entries/2026-11-07-1823-lens-log-global.md) |
