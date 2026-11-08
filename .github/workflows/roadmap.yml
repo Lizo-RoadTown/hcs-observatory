@@ -21,6 +21,8 @@ jobs:
     env:
       # A throwaway CI database; the real connection is always injected via LENS_DB_URL.
       LENS_TEST_DB_URL: postgresql://postgres:lens@localhost:5432/lens_test
+      # Fail, don't skip, if the database tests cannot run here.
+      LENS_REQUIRE_DB_TESTS: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

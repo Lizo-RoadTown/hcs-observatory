@@ -3,7 +3,6 @@
 Static tests read the SQL and run everywhere. Database tests apply it to a real, empty
 Postgres given by LENS_TEST_DB_URL (CI provides one); they are skipped without it.
 """
-import os
 import re
 from pathlib import Path
 
@@ -56,19 +55,14 @@ def test_every_table_has_a_generated_primary_key():
         assert re.search(r"id\s+uuid PRIMARY KEY DEFAULT gen_random_uuid\(\)", body.group(1)), name
 
 
-DB_URL = os.environ.get("LENS_TEST_DB_URL")
-needs_db = pytest.mark.skipif(not DB_URL, reason="LENS_TEST_DB_URL not set (CI provides a Postgres)")
+def test_guard_refuses_a_database_that_is_not_a_throwaway():
+    pytest.importorskip("psycopg")
+    from conftest import assert_throwaway
+    with pytest.raises(RuntimeError, match="refusing"):
+        assert_throwaway("postgresql://u:p@db.example.supabase.co:5432/postgres")
+    assert_throwaway("postgresql://u:p@localhost:5432/lens_test")
 
 
-@pytest.fixture
-def db():
-    psycopg = pytest.importorskip("psycopg")
-    with psycopg.connect(DB_URL, autocommit=True) as conn:
-        conn.execute("DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
-        yield conn
-
-
-@needs_db
 def test_spine_applies_to_an_empty_database_twice(db):
     db.execute(SQL)
     db.execute(SQL)  # idempotent
@@ -77,7 +71,6 @@ def test_spine_applies_to_an_empty_database_twice(db):
     assert set(tables(SQL)) <= got
 
 
-@needs_db
 def test_relationships_and_enrichments_hang_off_verified(db):
     db.execute(SQL)
     a = db.execute("INSERT INTO verified (canonical_key, kind, payload) VALUES ('a','x','{}') RETURNING id").fetchone()[0]
@@ -98,20 +91,22 @@ def test_every_table_starts_closed_in_the_sql():
     assert "CREATE TRIGGER" not in SQL.upper()
 
 
-@needs_db
 def test_hosted_roles_and_strangers_get_nothing(db):
     for role in ("anon", "authenticated", "lens_probe"):
         db.execute(f"DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{role}') "
                    f"THEN CREATE ROLE {role}; END IF; END $$;")
     # Simulate a host that grants new tables to its API roles by default.
     db.execute("ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated")
-    db.execute(SQL)
-    for name in tables(SQL):
-        for role in ("anon", "authenticated", "lens_probe"):
-            granted = db.execute("SELECT has_table_privilege(%s, %s, 'SELECT')",
-                                 (role, f"public.{name}")).fetchone()[0]
-            assert not granted, f"{role} can read {name}"
-        rls = db.execute("SELECT relrowsecurity FROM pg_class WHERE oid = %s::regclass",
-                         (f"public.{name}",)).fetchone()[0]
-        assert rls, f"row security is off on {name}"
-    db.execute("ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated")
+    try:
+        db.execute(SQL)
+        for name in tables(SQL):
+            for role in ("anon", "authenticated", "lens_probe"):
+                for priv in ("SELECT", "INSERT", "UPDATE", "DELETE"):
+                    granted = db.execute("SELECT has_table_privilege(%s, %s, %s)",
+                                         (role, f"public.{name}", priv)).fetchone()[0]
+                    assert not granted, f"{role} has {priv} on {name}"
+            rls = db.execute("SELECT relrowsecurity FROM pg_class WHERE oid = %s::regclass",
+                             (f"public.{name}",)).fetchone()[0]
+            assert rls, f"row security is off on {name}"
+    finally:
+        db.execute("ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated")
