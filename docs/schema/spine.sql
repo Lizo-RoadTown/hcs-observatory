@@ -17,7 +17,6 @@
 -- Not yet here (roadmap):
 --   * the scope column on every table (spine-scope-column, loose);
 --   * the review and promotion contract (review-promotion-contract);
---   * grants and row security defaults (spine-security-defaults).
 -- Groups of people (organizations, members, roles) belong to the access + tenancy module
 -- (pr-007), not the spine.
 --
@@ -161,3 +160,44 @@ CREATE TABLE IF NOT EXISTS oversight_trust_history (
     reason         text,
     created_at     timestamptz NOT NULL DEFAULT now()
 );
+
+-- ---------------------------------------------------------------------------
+-- Security defaults: every table starts closed.
+-- Row security is on with no policies, so an ordinary role sees no rows even if it is
+-- granted access by mistake; nothing is granted to PUBLIC. Hosts that grant new tables
+-- to API roles by default (Supabase's anon and authenticated) have those grants removed.
+-- Policies and grants for real users come from the access + tenancy module (pr-007).
+-- There are no triggers in the standard.
+-- ---------------------------------------------------------------------------
+ALTER TABLE sources ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON sources FROM PUBLIC;
+ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON candidates FROM PUBLIC;
+ALTER TABLE decisions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON decisions FROM PUBLIC;
+ALTER TABLE verified ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON verified FROM PUBLIC;
+ALTER TABLE relationships ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON relationships FROM PUBLIC;
+ALTER TABLE enrichments ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON enrichments FROM PUBLIC;
+ALTER TABLE oversight_capabilities ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON oversight_capabilities FROM PUBLIC;
+ALTER TABLE oversight_proposals ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON oversight_proposals FROM PUBLIC;
+ALTER TABLE oversight_trust_history ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON oversight_trust_history FROM PUBLIC;
+
+DO $$
+DECLARE
+    r text;
+    t text;
+BEGIN
+    FOREACH r IN ARRAY ARRAY['anon', 'authenticated'] LOOP
+        IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = r) THEN
+            FOREACH t IN ARRAY ARRAY['sources', 'candidates', 'decisions', 'verified', 'relationships', 'enrichments', 'oversight_capabilities', 'oversight_proposals', 'oversight_trust_history'] LOOP
+                EXECUTE format('REVOKE ALL ON %I FROM %I', t, r);
+            END LOOP;
+        END IF;
+    END LOOP;
+END $$;

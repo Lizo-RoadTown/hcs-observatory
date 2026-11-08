@@ -88,3 +88,30 @@ def test_relationships_and_enrichments_hang_off_verified(db):
     db.execute("INSERT INTO enrichments (verified_id, kind, alias, actor) VALUES (%s,'alias','A',  'r')", (a,))
     with pytest.raises(Exception):
         db.execute("INSERT INTO enrichments (verified_id, kind, actor) VALUES (%s,'alias','r')", (a,))
+
+
+def test_every_table_starts_closed_in_the_sql():
+    # spine-security-defaults: row security on, nothing granted to PUBLIC, no triggers.
+    for name in tables(SQL):
+        assert re.search(rf"ALTER TABLE {name} ENABLE ROW LEVEL SECURITY;", SQL), name
+        assert re.search(rf"REVOKE ALL ON {name} FROM PUBLIC;", SQL), name
+    assert "CREATE TRIGGER" not in SQL.upper()
+
+
+@needs_db
+def test_hosted_roles_and_strangers_get_nothing(db):
+    for role in ("anon", "authenticated", "lens_probe"):
+        db.execute(f"DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{role}') "
+                   f"THEN CREATE ROLE {role}; END IF; END $$;")
+    # Simulate a host that grants new tables to its API roles by default.
+    db.execute("ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated")
+    db.execute(SQL)
+    for name in tables(SQL):
+        for role in ("anon", "authenticated", "lens_probe"):
+            granted = db.execute("SELECT has_table_privilege(%s, %s, 'SELECT')",
+                                 (role, f"public.{name}")).fetchone()[0]
+            assert not granted, f"{role} can read {name}"
+        rls = db.execute("SELECT relrowsecurity FROM pg_class WHERE oid = %s::regclass",
+                         (f"public.{name}",)).fetchone()[0]
+        assert rls, f"row security is off on {name}"
+    db.execute("ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated")
