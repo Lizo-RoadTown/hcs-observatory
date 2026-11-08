@@ -2,7 +2,7 @@
 type: decision
 module: lens-core
 surfaces: [bus]
-date: 2026-11-07T19:05
+date: 2026-11-07T19:01
 source_commits: {}
 ---
 
