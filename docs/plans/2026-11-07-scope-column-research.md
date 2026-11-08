@@ -91,6 +91,24 @@ Who authorizes a crossing, and how it is recorded, belongs to access + tenancy a
 
 None of these changes the column's shape. The recommendation holds whatever the answers are.
 
+## The operator's answer (2026-11-07)
+
+Question 1 is answered (loom memory
+`decision-personal-project-boundary-and-public-projects-2026-11-07`):
+- **Separate databases:** personal and project data do not typically share a database. A
+  project is like a GitHub repo that people push to, pull from and contribute to. There is a
+  boundary between the two layers.
+- **Owners:** an owner holds everything personally. Whether to force the owner's personal data
+  apart from the project's when the project is made **public** is to be discussed with the
+  operator.
+- **Public projects:** a public project is what QuickPrime reads. It notes the contributors and
+  hooks into the project and their personal MCPs to track communication between contributors.
+
+Effect on this design: none on the column's shape. The boundary is normally between databases,
+and within a project database `scope_id` keeps projects apart. Forced separation for public
+projects belongs to the boundary-enforcement item. Question 2 (one shared id registry) stays
+with Tapestry.
+
 ## Proposed roadmap change
 
 Split `spine-scope-column`:
