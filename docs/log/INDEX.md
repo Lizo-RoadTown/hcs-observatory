@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 36b44d0 |
+| lens-core | fd1bf6b |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -36,10 +36,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (37)
+## Entries (38)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-07T18:57 | lens-core | decision | bus, source, roadmap | Spine v1: neutral names and the five one-table choices | [2026-11-07-1857-spine-v1-names-and-one-table.md](entries/2026-11-07-1857-spine-v1-names-and-one-table.md) |
 | 2026-11-07T18:23 | lens-core | process | roadmap | lens-log installed globally (user scope) at 0.1.5 | [2026-11-07-1823-lens-log-global.md](entries/2026-11-07-1823-lens-log-global.md) |
 | 2026-10-21T22:06 | lens-core | process | roadmap | Log index: one index of every Lens module's log, with consistency and audit | [2026-10-21-2206-log-index.md](entries/2026-10-21-2206-log-index.md) |
 | 2026-10-21T09:32 | lens-core | process | source | Guest and agent handoff documentation for proves_viewer written | [2026-10-21-0932-viewer-guest-docs.md](entries/2026-10-21-0932-viewer-guest-docs.md) |
