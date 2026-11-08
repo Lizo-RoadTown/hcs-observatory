@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | b3b8d91 |
+| lens-core | 1d3e448 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -40,10 +40,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (43)
+## Entries (44)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-07T22:52 | lens-core | process | source | PROVES key usage cited; dashboard hardcodes its anon key | [2026-11-07-2252-proves-key-usage-citations.md](entries/2026-11-07-2252-proves-key-usage-citations.md) |
 | 2026-11-07T22:49 | lens-core | decision | architecture, roadmap, source | Architecture: QuickPrime is the shared knowledge graph above the observatories | [2026-11-07-2249-quickprime-shared-graph-layer.md](entries/2026-11-07-2249-quickprime-shared-graph-layer.md) |
 | 2026-11-07T22:08 | lens-core | decision | module, bus, roadmap | Launcher applies the standard once, records its version, refuses unsafe targets | [2026-11-07-2208-launcher-applies-spine.md](entries/2026-11-07-2208-launcher-applies-spine.md) |
 | 2026-11-07T22:02 | lens-core | decision | bus, roadmap | Review and promotion contract: verified entries trace to an accept decision by foreign key | [2026-11-07-2202-review-promotion-contract.md](entries/2026-11-07-2202-review-promotion-contract.md) |
