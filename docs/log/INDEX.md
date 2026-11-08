@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | b74ddb8 |
+| lens-core | b236c63 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -35,6 +35,7 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 | lens-core | a9958f6 | Roadmap: spine-security-defaults done | ROADMAP.md, roadmap.yaml |
 | lens-core | 043b71b | Roadmap: review-promotion-contract done | ROADMAP.md, roadmap.yaml |
 | lens-core | 68af19c | Roadmap: launcher-applies-spine done | ROADMAP.md, roadmap.yaml |
+| lens-core | b236c63 | Roadmap: spine-scope-column done (standard 0.2.0) | ROADMAP.md, roadmap.yaml |
 
 ## Misses
 
