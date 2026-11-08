@@ -197,10 +197,11 @@ items:
     outcome: lens-core stands up the standard on an empty Postgres from LENS_DB_URL, repeatably.
     horizon: now
     firmness: firm
-    status: in-progress
+    status: done
     owner: lens-core
     depends_on: [spine-security-defaults]
     exit_check: "lens-core new applies spine.sql twice to an empty database without error"
+    evidence: [lens-core cf7485b, lens-core 6fa0566, "CI run 42453587108: 47 passed; installed wheel printed lens-core 0.0.1 (standard 0.1.0)"]
 
   # ---------- Phase C: each module derives and builds its own piece ----------
   - id: ingest-derives-plan
