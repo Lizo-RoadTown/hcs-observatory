@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | f715bc5 |
+| lens-core | f497eda |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -40,10 +40,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (46)
+## Entries (47)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-08T12:01 | lens-core | decision | roadmap | Scope column made firm; boundary enforcement split out | [2026-11-08-1201-scope-column-firm.md](entries/2026-11-08-1201-scope-column-firm.md) |
 | 2026-11-07T23:04 | lens-core | process | roadmap | Operator's answer on the personal and project boundary recorded in the scope research | [2026-11-07-2304-boundary-answer-recorded.md](entries/2026-11-07-2304-boundary-answer-recorded.md) |
 | 2026-11-07T22:57 | lens-core | process | roadmap | Scope column researched; recommendation and a proposed split | [2026-11-07-2257-scope-column-research.md](entries/2026-11-07-2257-scope-column-research.md) |
 | 2026-11-07T22:52 | lens-core | process | source | PROVES key usage cited; dashboard hardcodes its anon key | [2026-11-07-2252-proves-key-usage-citations.md](entries/2026-11-07-2252-proves-key-usage-citations.md) |
