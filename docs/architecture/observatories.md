@@ -14,6 +14,12 @@ contributor, it is private, and it follows that person across all their projects
 and Loom memory plan to build them from elements of the Lens. The two meet only at a
 project's shared interfaces.
 
+Above both sits a third layer, added 2026-11-07: **QuickPrime, the shared knowledge graph.**
+Many people, each with their own memory and observers over many projects, feed it the
+telemetry they choose to share about what they are learning and building. Their private data
+stays with them; the shared knowledge accumulates in one graph. See
+[The shared knowledge graph](#the-shared-knowledge-graph-quickprime).
+
 ## The two observatories
 
 ```mermaid
@@ -129,9 +135,57 @@ The Lens already follows these as reuse rules. Personal reuse is a further reaso
 - In the database, this is a rule on what crosses the bus (like row security), not a table.
   Where it is enforced is still open.
 
+## The shared knowledge graph (QuickPrime)
+
+The operator's decision (2026-11-07, loom memory
+`decision-quickprime-is-the-shared-knowledge-graph-2026-11-07`): QuickPrime is the module where
+many people's memories and observers connect to build one shared knowledge graph. Her example: a
+group of friends, each with observers over many projects, feeding one shared graph. It is not a
+game for now; the scope is the functionality.
+
+```mermaid
+flowchart TB
+  QP[("QuickPrime: the shared knowledge graph<br/>many people, many projects")]
+  subgraph ALICE["Member A (private)"]
+    AM["A's own memory server"]
+    AP["A's personal observatory"]
+  end
+  subgraph BOB["Member B (private)"]
+    BM["B's own memory server"]
+    BP["B's personal observatory"]
+  end
+  subgraph PROJ["A project both work on"]
+    LP["The Lens: project observatory"]
+  end
+  AM -->|chosen shared telemetry| QP
+  AP -->|chosen shared telemetry| QP
+  BM -->|chosen shared telemetry| QP
+  BP -->|chosen shared telemetry| QP
+  LP -->|project knowledge it may share| QP
+  AP -.->|works on| LP
+  BP -.->|works on| LP
+```
+
+| | Personal observatory | Project observatory (the Lens) | Shared graph (QuickPrime) |
+|---|---|---|---|
+| How many | one per person | one per project | one, shared by many people |
+| Holds | one person's private model and memory | one project's verified knowledge and map | what members choose to share about what they learn and build |
+| Privacy | private | shared within the project | shared among members; nothing private enters |
+
+- Each member builds their own memory server from QuickPrime's build-your-own instructions.
+  Liz's own memory (Loom_MCP) is the reference implementation and is never exposed.
+- The same boundary rule holds one layer up: only what a member or project deliberately sends
+  crosses into the graph.
+- How contributions connect, which telemetry is sent, how a contribution is checked before it
+  counts, and privacy at that boundary are **QuickPrime's research items**, not decided here.
+  The Lens spine (candidates → decisions → verified) is one option QuickPrime may evaluate.
+- On the Lens side: a project observatory may contribute to the graph. What it sends waits on
+  QuickPrime's contract (roadmap item `project-observatory-feeds-shared-graph`).
+
 ## Open
 
-- Names for the two proposed repos (workflow oversight; access + tenancy).
+- Final names for the two proposed repos (workflow oversight; access + tenancy), after the
+  full decomposition is reconciled.
 - Which Lens elements Tapestry actually reuses, and whether they are shared as packages or
   copied. Tapestry is breaking itself down now, so this follows its plan.
 - Where the personal-to-project boundary is enforced (in the standard, in each personal
@@ -143,3 +197,4 @@ The Lens already follows these as reuse rules. Personal reuse is a further reaso
   `docs/decomposition/proves/module-map.md`.
 - Surveyor evaluation: `docs/decomposition/evaluations/2026-10-21-observation-layers.md`.
 - The operator's description of individual and shared project layers, 2026-10-21.
+- The operator's description of QuickPrime as the shared knowledge graph, 2026-11-07.

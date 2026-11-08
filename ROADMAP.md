@@ -37,6 +37,7 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | docs-sites | Docs agent and docs-site skeleton in every Lens repo | Each repo documents itself from a shared skeleton. | lens-core | firm | proposed |  | each repo builds its docs site skeleton |
 | candidate-flow-one-pattern | One candidate -> decision flow | Tapestry's architecture-registry promotion and the Lens spine are not two versions of one pattern. | lens-core | hypothesis | proposed |  | decide when: Tapestry decides how personal confirmation works |
 | personal-observatory-reuse | Personal observatories built from Lens elements | Tapestry and Loom memory reuse published Lens modules, never a runtime dependency. | tapestry | hypothesis | proposed |  | decide when: Tapestry names which Lens elements it needs |
+| project-observatory-feeds-shared-graph | A project observatory can contribute to the shared knowledge graph (QuickPrime) | What a Lens project observatory chooses to share reaches QuickPrime's graph through QuickPrime's contract, and nothing private crosses. | lens-core | loose | proposed |  | decide when: QuickPrime's research proposes its hook-in contract (which telemetry, how it arrives, how it is checked) |
 
 ## Done
 

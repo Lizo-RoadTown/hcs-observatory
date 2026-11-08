@@ -359,6 +359,17 @@ items:
     consumers: [tapestry]
     decide_when: Tapestry names which Lens elements it needs
 
+  - id: project-observatory-feeds-shared-graph
+    title: A project observatory can contribute to the shared knowledge graph (QuickPrime)
+    outcome: What a Lens project observatory chooses to share reaches QuickPrime's graph through QuickPrime's contract, and nothing private crosses.
+    horizon: later
+    firmness: loose
+    status: proposed
+    owner: lens-core
+    consumers: [quickprime]
+    decide_when: QuickPrime's research proposes its hook-in contract (which telemetry, how it arrives, how it is checked)
+    decision_ref: loom memory decision-quickprime-is-the-shared-knowledge-graph-2026-11-07
+
   # ---------- Surveyor ----------
   - id: teaching-material-handling
     title: Decide which teaching material comes into Surveyor, and in what form
