@@ -153,12 +153,13 @@ items:
     outcome: Every row belongs to exactly one opaque scope (a registry project id or a carried person id), no reference crosses scopes, and canonical_key is unique per scope.
     horizon: now
     firmness: firm
-    status: in-progress
+    status: done
     owner: lens-core
     touches_bus: [docs/schema/spine.sql]
     exit_check: "tests/test_spine.py scope tests pass against Postgres in CI; launcher records standard 0.2.0"
     consumers: [tapestry, quickprime]
     decision_ref: lens-core docs/plans/2026-11-07-scope-column-research.md
+    evidence: [lens-core b74ddb8, "CI: 57 passed (7 scope DB tests); installed wheel reports standard 0.2.0"]
 
   - id: scope-boundary-enforcement
     title: Enforce the personal and project boundary (policies, crossings, public projects)

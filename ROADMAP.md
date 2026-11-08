@@ -10,7 +10,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | rotate-proves-key | Rotate the committed PROVES service_role key | The key committed in PROVES_LIBRARY scripts no longer authenticates. | operator | firm | proposed |  | human: Supabase shows the old service_role key revoked |
-| spine-scope-column | Scope column on every spine table (standard 0.2.0) | Every row belongs to exactly one opaque scope (a registry project id or a carried person id), no reference crosses scopes, and canonical_key is unique per scope. | lens-core | firm | in-progress |  | tests/test_spine.py scope tests pass against Postgres in CI; launcher records standard 0.2.0 |
 | ingest-derives-plan | lens-ingest works its source and records its own plan | lens-ingest has a plan it derived from PROVES, recorded in its log. | lens-ingest | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-ingest docs/log naming its derived plan |
 | review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
 | serve-derives-plan | lens-serve works its source and records its own plan | lens-serve has a plan it derived from PROVES, recorded in its log. | lens-serve | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-serve docs/log naming its derived plan |
@@ -55,6 +54,7 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | surveyor | done | surveyor 5d1e804, 92 tests pass, lizo-skills marketplace 2a7036a |
 | spine-neutral-names | Neutral table names in the spine | lens-core | done | lens-core fd1bf6b, tests/test_spine.py::test_no_reference_system_names_in_the_standard |
 | spine-one-table-choices | Apply the five approved one-table choices | lens-core | done | lens-core fd1bf6b, tests/test_spine.py::test_one_table_per_kind_of_data and DB tests, CI run 42440690022 (30 passed, none skipped) |
+| spine-scope-column | Scope column on every spine table (standard 0.2.0) | lens-core | done | lens-core b74ddb8, CI: 57 passed (7 scope DB tests); installed wheel reports standard 0.2.0 |
 | review-promotion-contract | Review and promotion contract | lens-core | done | lens-core 6f45c72, contract tests in tests/test_spine.py; CI run 42453137049 (38 passed, none skipped) |
 | spine-security-defaults | No anonymous grants; remove the source_id trigger bug | lens-core | done | lens-core 1658ab2, tests/test_spine.py::test_hosted_roles_and_strangers_get_nothing, CI run 42440991778 (32 passed) |
 | launcher-applies-spine | Launcher applies the spine | lens-core | done | lens-core cf7485b, lens-core 6fa0566, CI run 42453587108: 47 passed; installed wheel printed lens-core 0.0.1 (standard 0.1.0) |
