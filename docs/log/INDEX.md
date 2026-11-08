@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 043b71b |
+| lens-core | cf7485b |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -39,10 +39,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (41)
+## Entries (42)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-07T22:08 | lens-core | decision | module, bus, roadmap | Launcher applies the standard once, records its version, refuses unsafe targets | [2026-11-07-2208-launcher-applies-spine.md](entries/2026-11-07-2208-launcher-applies-spine.md) |
 | 2026-11-07T22:02 | lens-core | decision | bus, roadmap | Review and promotion contract: verified entries trace to an accept decision by foreign key | [2026-11-07-2202-review-promotion-contract.md](entries/2026-11-07-2202-review-promotion-contract.md) |
 | 2026-11-07T21:59 | lens-core | process |  | Database tests refuse non-throwaway databases; CI fails if they skip | [2026-11-07-2159-db-test-guard.md](entries/2026-11-07-2159-db-test-guard.md) |
 | 2026-11-07T19:01 | lens-core | decision | bus | Spine starts closed: row security on, no PUBLIC or hosted-API grants, no triggers | [2026-11-07-1901-spine-security-defaults.md](entries/2026-11-07-1901-spine-security-defaults.md) |
