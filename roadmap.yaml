@@ -127,7 +127,7 @@ items:
   - id: spine-neutral-names
     title: Neutral table names in the spine
     outcome: The standard carries no PROVES table names.
-    horizon: next
+    horizon: now
     firmness: firm
     status: proposed
     owner: lens-core
@@ -137,7 +137,7 @@ items:
   - id: spine-one-table-choices
     title: Apply the five approved one-table choices
     outcome: Each kind of data (relationships, aliases, review state, groups, proposals) has one home.
-    horizon: next
+    horizon: now
     firmness: firm
     status: proposed
     owner: lens-core
@@ -170,7 +170,7 @@ items:
   - id: review-promotion-contract
     title: Review and promotion contract
     outcome: Candidate -> decision -> verified works, fixing the PROVES 009/011 and CHECK defects.
-    horizon: next
+    horizon: now
     firmness: firm
     status: proposed
     owner: lens-core
@@ -181,7 +181,7 @@ items:
   - id: spine-security-defaults
     title: No anonymous grants; remove the source_id trigger bug
     outcome: The standard starts closed and has no broken trigger.
-    horizon: next
+    horizon: now
     firmness: firm
     status: proposed
     owner: lens-core
@@ -191,7 +191,7 @@ items:
   - id: launcher-applies-spine
     title: Launcher applies the spine
     outcome: lens-core stands up the standard on an empty Postgres from LENS_DB_URL, repeatably.
-    horizon: next
+    horizon: now
     firmness: firm
     status: proposed
     owner: lens-core

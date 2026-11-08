@@ -1,0 +1,90 @@
+"""The shared standard (docs/schema/spine.sql).
+
+Static tests read the SQL and run everywhere. Database tests apply it to a real, empty
+Postgres given by LENS_TEST_DB_URL (CI provides one); they are skipped without it.
+"""
+import os
+import re
+from pathlib import Path
+
+import pytest
+
+SPINE = Path(__file__).resolve().parents[1] / "docs" / "schema" / "spine.sql"
+SQL = SPINE.read_text(encoding="utf-8")
+SCHEMA_DIR = SPINE.parent
+
+# Tables of the reference system the standard was derived from. The standard must not carry
+# them (roadmap item spine-neutral-names); the mapping lives in Surveyor's case records.
+REFERENCE_TABLES = [
+    "staging_extractions", "validation_decisions", "core_entities", "raw_snapshots",
+    "core_equivalences", "knowledge_enrichment", "entity_alias", "staging_relationships",
+    "kg_relationships", "knowledge_component_relationships", "agent_proposals",
+    "improvement_suggestions", "agent_capabilities", "agent_trust_history", "pipeline_runs",
+    "knowledge_epistemics",
+]
+
+
+def tables(sql: str) -> list[str]:
+    return re.findall(r"CREATE TABLE IF NOT EXISTS\s+(\w+)", sql, re.I)
+
+
+def test_no_reference_system_names_in_the_standard():
+    for path in SCHEMA_DIR.rglob("*"):
+        if path.is_file():
+            text = path.read_text(encoding="utf-8").lower()
+            found = [t for t in REFERENCE_TABLES if re.search(rf"\b{t}\b", text)]
+            assert not found, f"{path.name} names reference tables: {found}"
+
+
+def test_one_table_per_kind_of_data():
+    # The five approved one-table choices (Surveyor module-map section 5).
+    names = tables(SQL)
+    assert len(names) == len(set(names)), "a table is declared twice"
+    assert [n for n in names if "relationship" in n] == ["relationships"]
+    assert [n for n in names if "alias" in n or "enrich" in n] == ["enrichments"]
+    assert [n for n in names if "proposal" in n or "suggestion" in n] == ["oversight_proposals"]
+    # Review state is candidates.status plus the latest decision: no second review column.
+    assert "review_decision" not in SQL
+    # Groups of people belong to access + tenancy, not the spine.
+    assert not [n for n in names if n in ("organizations", "teams", "groups")]
+
+
+def test_every_table_has_a_generated_primary_key():
+    for name in tables(SQL):
+        body = re.search(rf"CREATE TABLE IF NOT EXISTS\s+{name}\s*\((.*?)\n\);", SQL, re.S | re.I)
+        assert body, name
+        assert re.search(r"id\s+uuid PRIMARY KEY DEFAULT gen_random_uuid\(\)", body.group(1)), name
+
+
+DB_URL = os.environ.get("LENS_TEST_DB_URL")
+needs_db = pytest.mark.skipif(not DB_URL, reason="LENS_TEST_DB_URL not set (CI provides a Postgres)")
+
+
+@pytest.fixture
+def db():
+    psycopg = pytest.importorskip("psycopg")
+    with psycopg.connect(DB_URL, autocommit=True) as conn:
+        conn.execute("DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
+        yield conn
+
+
+@needs_db
+def test_spine_applies_to_an_empty_database_twice(db):
+    db.execute(SQL)
+    db.execute(SQL)  # idempotent
+    got = {r[0] for r in db.execute(
+        "SELECT table_name FROM information_schema.tables WHERE table_schema='public'")}
+    assert set(tables(SQL)) <= got
+
+
+@needs_db
+def test_relationships_and_enrichments_hang_off_verified(db):
+    db.execute(SQL)
+    a = db.execute("INSERT INTO verified (canonical_key, kind, payload) VALUES ('a','x','{}') RETURNING id").fetchone()[0]
+    b = db.execute("INSERT INTO verified (canonical_key, kind, payload) VALUES ('b','x','{}') RETURNING id").fetchone()[0]
+    db.execute("INSERT INTO relationships (from_id, to_id, kind, confidence) VALUES (%s,%s,'same_as',0.9)", (a, b))
+    with pytest.raises(Exception):
+        db.execute("INSERT INTO relationships (from_id, to_id, kind, confidence) VALUES (%s,%s,'same_as',0.5)", (a, b))
+    db.execute("INSERT INTO enrichments (verified_id, kind, alias, actor) VALUES (%s,'alias','A',  'r')", (a,))
+    with pytest.raises(Exception):
+        db.execute("INSERT INTO enrichments (verified_id, kind, actor) VALUES (%s,'alias','r')", (a,))
