@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | f497eda |
+| lens-core | b74ddb8 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -40,10 +40,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (47)
+## Entries (48)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-08T12:09 | lens-core | decision | bus, module | Standard 0.2.0: every row has one scope; nothing points across scopes | [2026-11-08-1209-spine-scope-column.md](entries/2026-11-08-1209-spine-scope-column.md) |
 | 2026-11-08T12:01 | lens-core | decision | roadmap | Scope column made firm; boundary enforcement split out | [2026-11-08-1201-scope-column-firm.md](entries/2026-11-08-1201-scope-column-firm.md) |
 | 2026-11-07T23:04 | lens-core | process | roadmap | Operator's answer on the personal and project boundary recorded in the scope research | [2026-11-07-2304-boundary-answer-recorded.md](entries/2026-11-07-2304-boundary-answer-recorded.md) |
 | 2026-11-07T22:57 | lens-core | process | roadmap | Scope column researched; recommendation and a proposed split | [2026-11-07-2257-scope-column-research.md](entries/2026-11-07-2257-scope-column-research.md) |
