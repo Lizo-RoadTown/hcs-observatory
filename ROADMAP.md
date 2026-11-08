@@ -10,8 +10,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | rotate-proves-key | Rotate the committed PROVES service_role key | The key committed in PROVES_LIBRARY scripts no longer authenticates. | operator | firm | proposed |  | human: Supabase shows the old service_role key revoked |
-| spine-neutral-names | Neutral table names in the spine | The standard carries no PROVES table names. | lens-core | firm | proposed |  | grep finds no PROVES table names in docs/schema |
-| spine-one-table-choices | Apply the five approved one-table choices | Each kind of data (relationships, aliases, review state, groups, proposals) has one home. | lens-core | firm | proposed | spine-neutral-names | schema test asserts one table per kind |
 | review-promotion-contract | Review and promotion contract | Candidate -> decision -> verified works, fixing the PROVES 009/011 and CHECK defects. | lens-core | firm | proposed | spine-one-table-choices | test runs source -> candidate -> decision -> verified on an empty database |
 | spine-security-defaults | No anonymous grants; remove the source_id trigger bug | The standard starts closed and has no broken trigger. | lens-core | firm | proposed |  | schema test: anon has no grants; all triggers compile |
 | launcher-applies-spine | Launcher applies the spine | lens-core stands up the standard on an empty Postgres from LENS_DB_URL, repeatably. | lens-core | firm | proposed | review-promotion-contract, spine-security-defaults | lens-core new applies spine.sql twice to an empty database without error |
@@ -56,4 +54,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | log-index-action | Log-index GitHub Action | lens-core | done | lens-core 49e43dd, log-index run 39726154238 green; bot rebuilt INDEX.md in 3664af3, consistency failure covered by tests/test_log_index.py |
 | roadmap-check-in-ci | Run the roadmap check in CI | lens-core | done | lens-core 10a8896, CI run 39609823937 passed on main, CI run 39609904466 failed on a deliberately broken roadmap (PR 1, closed) |
 | lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | surveyor | done | surveyor 5d1e804, 92 tests pass, lizo-skills marketplace 2a7036a |
+| spine-neutral-names | Neutral table names in the spine | lens-core | done | lens-core fd1bf6b, tests/test_spine.py::test_no_reference_system_names_in_the_standard |
+| spine-one-table-choices | Apply the five approved one-table choices | lens-core | done | lens-core fd1bf6b, tests/test_spine.py::test_one_table_per_kind_of_data and DB tests, CI run 42440690022 (30 passed, none skipped) |
 | program-layer-ids | Stable pr- component IDs for the program layer | lens-core | done | lens-core decomposition.json ids (pr-001 to pr-007), enforced by scripts/roadmap.py check_ids |

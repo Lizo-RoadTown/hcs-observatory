@@ -129,22 +129,24 @@ items:
     outcome: The standard carries no PROVES table names.
     horizon: now
     firmness: firm
-    status: proposed
+    status: done
     owner: lens-core
     touches_bus: [docs/schema/spine.sql]
     exit_check: "grep finds no PROVES table names in docs/schema"
+    evidence: [lens-core fd1bf6b, "tests/test_spine.py::test_no_reference_system_names_in_the_standard"]
 
   - id: spine-one-table-choices
     title: Apply the five approved one-table choices
     outcome: Each kind of data (relationships, aliases, review state, groups, proposals) has one home.
     horizon: now
     firmness: firm
-    status: proposed
+    status: done
     owner: lens-core
     depends_on: [spine-neutral-names]
     touches_bus: [docs/schema/spine.sql]
     exit_check: "schema test asserts one table per kind"
     assumptions: ["surveyor docs/decomposition/proves/module-map.md section 5"]
+    evidence: [lens-core fd1bf6b, "tests/test_spine.py::test_one_table_per_kind_of_data and DB tests, CI run 42440690022 (30 passed, none skipped)"]
 
   - id: spine-scope-column
     title: Scope column on every spine table, neutral about scale
