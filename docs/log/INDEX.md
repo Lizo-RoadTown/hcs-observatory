@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 32f718c |
+| lens-core | a093546 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -37,10 +37,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (38)
+## Entries (39)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-07T19:01 | lens-core | decision | bus | Spine starts closed: row security on, no PUBLIC or hosted-API grants, no triggers | [2026-11-07-1901-spine-security-defaults.md](entries/2026-11-07-1901-spine-security-defaults.md) |
 | 2026-11-07T18:57 | lens-core | decision | bus, source, roadmap | Spine v1: neutral names and the five one-table choices | [2026-11-07-1857-spine-v1-names-and-one-table.md](entries/2026-11-07-1857-spine-v1-names-and-one-table.md) |
 | 2026-11-07T18:23 | lens-core | process | roadmap | lens-log installed globally (user scope) at 0.1.5 | [2026-11-07-1823-lens-log-global.md](entries/2026-11-07-1823-lens-log-global.md) |
 | 2026-10-21T22:06 | lens-core | process | roadmap | Log index: one index of every Lens module's log, with consistency and audit | [2026-10-21-2206-log-index.md](entries/2026-10-21-2206-log-index.md) |
