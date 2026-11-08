@@ -174,11 +174,12 @@ items:
     outcome: The database guarantees every verified entry traces to an accept decision on its own candidate (constraints only; lens-review owns promotion code).
     horizon: now
     firmness: firm
-    status: in-progress
+    status: done
     owner: lens-core
     depends_on: [spine-one-table-choices]
     touches_bus: [docs/schema/spine.sql]
     exit_check: "test runs source -> candidate -> decision -> verified on an empty database"
+    evidence: [lens-core 6f45c72, "contract tests in tests/test_spine.py; CI run 42453137049 (38 passed, none skipped)"]
 
   - id: spine-security-defaults
     title: No anonymous grants; remove the source_id trigger bug
