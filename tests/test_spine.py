@@ -73,15 +73,19 @@ def test_spine_applies_to_an_empty_database_twice(db):
 
 def test_relationships_and_enrichments_hang_off_verified(db):
     _, ca = _seed(db)
-    a = _verify(db, ca, _decide(db, ca, "accept"))
-    cb = db.execute("INSERT INTO candidates (kind, payload) VALUES ('thing','{}') RETURNING id").fetchone()[0]
-    b = _verify(db, cb, _decide(db, cb, "accept"))
-    db.execute("INSERT INTO relationships (from_id, to_id, kind, confidence) VALUES (%s,%s,'same_as',0.9)", (a, b))
+    a = _verify(db, ca, _decide(db, ca, "accept"), key="a")
+    cb = _candidate(db)
+    b = _verify(db, cb, _decide(db, cb, "accept"), key="b")
+    db.execute("INSERT INTO relationships (scope_id, from_id, to_id, kind, confidence) "
+               "VALUES (%s,%s,%s,'same_as',0.9)", (S1, a, b))
     with pytest.raises(Exception):
-        db.execute("INSERT INTO relationships (from_id, to_id, kind, confidence) VALUES (%s,%s,'same_as',0.5)", (a, b))
-    db.execute("INSERT INTO enrichments (verified_id, kind, alias, actor) VALUES (%s,'alias','A',  'r')", (a,))
+        db.execute("INSERT INTO relationships (scope_id, from_id, to_id, kind, confidence) "
+                   "VALUES (%s,%s,%s,'same_as',0.5)", (S1, a, b))
+    db.execute("INSERT INTO enrichments (scope_id, verified_id, kind, alias, actor) "
+               "VALUES (%s,%s,'alias','A','r')", (S1, a))
     with pytest.raises(Exception):
-        db.execute("INSERT INTO enrichments (verified_id, kind, actor) VALUES (%s,'alias','r')", (a,))
+        db.execute("INSERT INTO enrichments (scope_id, verified_id, kind, actor) "
+                   "VALUES (%s,%s,'alias','r')", (S1, a))
 
 
 def test_every_table_starts_closed_in_the_sql():
@@ -115,29 +119,37 @@ def test_hosted_roles_and_strangers_get_nothing(db):
 
 # ---- review-promotion-contract: every verified entry traces to an accept decision ----
 
-def _seed(db):
+S1 = "11111111-1111-1111-1111-111111111111"
+S2 = "22222222-2222-2222-2222-222222222222"
+
+
+def _candidate(db, scope=S1, source=None):
+    return db.execute("INSERT INTO candidates (scope_id, source_id, kind, payload) "
+                      "VALUES (%s,%s,'thing','{}') RETURNING id", (scope, source)).fetchone()[0]
+
+
+def _seed(db, scope=S1):
     db.execute(SQL)
-    src = db.execute("INSERT INTO sources (uri) VALUES ('doc://a') RETURNING id").fetchone()[0]
-    cand = db.execute("INSERT INTO candidates (source_id, kind, payload) VALUES (%s,'thing','{}') "
-                      "RETURNING id", (src,)).fetchone()[0]
-    return src, cand
+    src = db.execute("INSERT INTO sources (scope_id, uri) VALUES (%s,'doc://a') RETURNING id",
+                     (scope,)).fetchone()[0]
+    return src, _candidate(db, scope, src)
 
 
-def _decide(db, cand, action):
-    return db.execute("INSERT INTO decisions (candidate_id, action, actor) VALUES (%s,%s,'reviewer-1') "
-                      "RETURNING id", (cand, action)).fetchone()[0]
+def _decide(db, cand, action, scope=S1):
+    return db.execute("INSERT INTO decisions (scope_id, candidate_id, action, actor) "
+                      "VALUES (%s,%s,%s,'reviewer-1') RETURNING id", (scope, cand, action)).fetchone()[0]
 
 
-def _verify(db, cand, dec):
-    return db.execute("INSERT INTO verified (canonical_key, kind, payload, candidate_id, decision_id, "
-                      "verified_by) VALUES ('k','thing','{}',%s,%s,'reviewer-1') RETURNING id",
-                      (cand, dec)).fetchone()[0]
+def _verify(db, cand, dec, scope=S1, key="k"):
+    return db.execute("INSERT INTO verified (scope_id, canonical_key, kind, payload, candidate_id, "
+                      "decision_id, verified_by) VALUES (%s,%s,'thing','{}',%s,%s,'reviewer-1') "
+                      "RETURNING id", (scope, key, cand, dec)).fetchone()[0]
 
 
 def test_contract_is_declared_in_the_sql():
-    assert re.search(r"UNIQUE \(id, candidate_id, action\)", SQL)
-    assert re.search(r"FOREIGN KEY \(decision_id, candidate_id, decision_action\)\s+REFERENCES "
-                     r"decisions \(id, candidate_id, action\)", SQL)
+    assert re.search(r"UNIQUE \(id, candidate_id, action, scope_id\)", SQL)
+    assert re.search(r"FOREIGN KEY \(decision_id, candidate_id, decision_action, scope_id\)\s+REFERENCES "
+                     r"decisions \(id, candidate_id, action, scope_id\)", SQL)
     assert "CHECK (decision_action = 'accept')" in SQL
 
 
@@ -155,8 +167,8 @@ def test_source_to_verified_through_an_accept(db):
 def test_verified_needs_a_decision(db):
     _, cand = _seed(db)
     with pytest.raises(Exception):
-        db.execute("INSERT INTO verified (canonical_key, kind, payload, candidate_id) "
-                   "VALUES ('k','thing','{}',%s)", (cand,))
+        db.execute("INSERT INTO verified (scope_id, canonical_key, kind, payload, candidate_id) "
+                   "VALUES (%s,'k','thing','{}',%s)", (S1, cand))
 
 
 def test_a_reject_cannot_be_promoted(db):
@@ -168,8 +180,7 @@ def test_a_reject_cannot_be_promoted(db):
 
 def test_a_decision_cannot_be_borrowed_from_another_candidate(db):
     src, cand = _seed(db)
-    other = db.execute("INSERT INTO candidates (source_id, kind, payload) VALUES (%s,'thing','{}') "
-                       "RETURNING id", (src,)).fetchone()[0]
+    other = _candidate(db, S1, src)
     dec = _decide(db, other, "accept")
     with pytest.raises(Exception):
         _verify(db, cand, dec)
@@ -180,3 +191,101 @@ def test_revoke_block_lists_exactly_the_spine_tables():
     block = re.search(r"FOREACH t IN ARRAY ARRAY\[(.*?)\]", SQL, re.S).group(1)
     listed = re.findall(r"'(\w+)'", block)
     assert listed == tables(SQL)
+
+
+# ---- spine-scope-column: every row has one scope; nothing points across scopes ----
+
+SCOPED = ["sources", "candidates", "decisions", "verified", "relationships", "enrichments",
+          "oversight_capabilities", "oversight_proposals", "oversight_trust_history"]
+
+
+def _body(name):
+    return re.search(rf"CREATE TABLE IF NOT EXISTS\s+{name}\s*\((.*?)\n\);", SQL, re.S).group(1)
+
+
+def test_every_table_but_the_version_record_has_a_scope():
+    assert sorted(SCOPED + ["standard_version"]) == sorted(tables(SQL))
+    for name in SCOPED:
+        assert re.search(r"^\s+scope_id\s+uuid NOT NULL,", _body(name), re.M), name
+    assert "scope_id" not in _body("standard_version")
+
+
+def test_scope_is_written_by_the_module_not_defaulted():
+    assert not re.search(r"scope_id[^,\n]*DEFAULT", SQL)
+    assert "current_setting" not in SQL
+
+
+def test_every_reference_between_spine_tables_carries_the_scope():
+    for name in SCOPED:
+        body = _body(name)
+        # No inline column references: every link is a table-level composite key.
+        assert not re.search(r"^\s+\w+\s+uuid[^\n]*REFERENCES", body, re.M), name
+        for cols, target in re.findall(r"FOREIGN KEY \(([^)]*)\)\s+REFERENCES\s+(\w+)", body):
+            assert "scope_id" in cols, f"{name}: {cols} -> {target}"
+
+
+def test_a_decision_cannot_point_into_another_scope(db):
+    _, cand = _seed(db, S1)
+    with pytest.raises(Exception):
+        _decide(db, cand, "accept", scope=S2)
+
+
+def test_a_verified_entry_cannot_use_another_scopes_accept(db):
+    _, cand = _seed(db, S1)
+    dec = _decide(db, cand, "accept", scope=S1)
+    with pytest.raises(Exception):
+        _verify(db, cand, dec, scope=S2)
+
+
+def test_relationships_enrichments_and_supersedes_stay_in_scope(db):
+    _, c1 = _seed(db, S1)
+    v1 = _verify(db, c1, _decide(db, c1, "accept"), key="one")
+    c2 = _candidate(db, S2)
+    v2 = _verify(db, c2, _decide(db, c2, "accept", scope=S2), scope=S2, key="two")
+    with pytest.raises(Exception):
+        db.execute("INSERT INTO relationships (scope_id, from_id, to_id, kind, confidence) "
+                   "VALUES (%s,%s,%s,'same_as',0.9)", (S1, v1, v2))
+    with pytest.raises(Exception):
+        db.execute("INSERT INTO enrichments (scope_id, verified_id, from_verified_id, kind, actor) "
+                   "VALUES (%s,%s,%s,'merge','r')", (S1, v1, v2))
+    with pytest.raises(Exception):
+        db.execute("UPDATE verified SET superseded_by = %s WHERE id = %s", (v2, v1))
+
+
+def test_canonical_key_is_unique_per_scope_among_current_entries(db):
+    _, c1 = _seed(db, S1)
+    _verify(db, c1, _decide(db, c1, "accept"), key="x")
+    c2 = _candidate(db, S2)
+    _verify(db, c2, _decide(db, c2, "accept", scope=S2), scope=S2, key="x")  # other scope: fine
+    c3 = _candidate(db, S1)
+    with pytest.raises(Exception):
+        _verify(db, c3, _decide(db, c3, "accept"), key="x")
+
+
+def test_a_referenced_row_cannot_change_scope(db):
+    _, cand = _seed(db, S1)
+    _decide(db, cand, "flag")
+    with pytest.raises(Exception):
+        db.execute("UPDATE candidates SET scope_id = %s WHERE id = %s", (S2, cand))
+
+
+def test_crossing_scopes_is_a_new_candidate_in_the_target_scope(db):
+    _, c1 = _seed(db, S1)
+    _verify(db, c1, _decide(db, c1, "accept"), key="shared-fact")
+    src2 = db.execute("INSERT INTO sources (scope_id, uri) VALUES (%s, %s) RETURNING id",
+                      (S2, f"lens://{S1}/verified/shared-fact")).fetchone()[0]
+    c2 = _candidate(db, S2, src2)
+    assert _verify(db, c2, _decide(db, c2, "accept", scope=S2), scope=S2, key="shared-fact")
+
+
+def test_deleting_a_merged_from_entry_keeps_the_enrichments_scope(db):
+    _, c1 = _seed(db, S1)
+    keep = _verify(db, c1, _decide(db, c1, "accept"), key="keep")
+    c2 = _candidate(db, S1)
+    gone = _verify(db, c2, _decide(db, c2, "accept"), key="gone")
+    eid = db.execute("INSERT INTO enrichments (scope_id, verified_id, from_verified_id, kind, actor) "
+                     "VALUES (%s,%s,%s,'merge','r') RETURNING id", (S1, keep, gone)).fetchone()[0]
+    db.execute("DELETE FROM verified WHERE id = %s", (gone,))
+    scope, merged_from = db.execute("SELECT scope_id::text, from_verified_id FROM enrichments "
+                                    "WHERE id = %s", (eid,)).fetchone()
+    assert scope == S1 and merged_from is None

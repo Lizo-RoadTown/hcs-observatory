@@ -18,6 +18,9 @@ def test_expected_columns_are_read_from_the_standard():
     cols = launch.expected_columns(launch.standard_sql())
     assert {"candidate_id", "decision_id", "decision_action"} <= cols["verified"]
     assert "id" in cols["sources"] and "UNIQUE" not in cols["decisions"]
+    # Continuation lines of table constraints are not columns.
+    assert not ({"ON", "REFERENCES", "FOREIGN"} & set().union(*cols.values()))
+    assert all("scope_id" in c for t, c in cols.items() if t != "standard_version")
 
 
 def test_no_database_is_an_error(monkeypatch, capsys):

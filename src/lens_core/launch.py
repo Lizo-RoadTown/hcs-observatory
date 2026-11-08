@@ -26,7 +26,7 @@ from pathlib import Path
 
 MODULES = ["lens-ingest", "lens-review", "lens-serve", "lens-observe"]
 _REPO_STANDARD = Path(__file__).resolve().parents[2] / "docs" / "schema" / "spine.sql"
-_CONSTRAINT_WORDS = {"UNIQUE", "FOREIGN", "CHECK", "PRIMARY", "CONSTRAINT", "REFERENCES"}
+_CONSTRAINT_WORDS = {"UNIQUE", "FOREIGN", "CHECK", "PRIMARY", "CONSTRAINT", "REFERENCES", "ON"}
 
 
 def standard_sql() -> str:

@@ -14,27 +14,40 @@
 -- section 5. Names here are provisional; final names come after the full decomposition
 -- is reconciled.
 --
--- Not yet here (roadmap):
---   * the scope column on every table (spine-scope-column, loose). No uniqueness on
---     canonical_key is declared yet, because scope changes what "unique" means.
--- Groups of people (organizations, members, roles) belong to the access + tenancy module
--- (pr-007), not the spine.
+-- Scope (lens-core docs/plans/2026-11-07-scope-column-research.md):
+--   * Every row except standard_version carries scope_id: the one scope it belongs to. It
+--     is opaque. A project's scope is its registry project id; a person's is the id their
+--     auth layer carries. The standard never says what kind of scope it is.
+--   * The writing module sets scope_id explicitly. There is no default and no trigger.
+--   * No reference crosses scopes: every link between spine tables is a composite key
+--     that includes scope_id (foreign key checks bypass row security, so policies alone
+--     could not stop it).
+--   * Rows never change scope. Moving knowledge to another scope means a new candidate in
+--     the target scope, reviewed the normal way, with its origin recorded in that scope's
+--     sources row.
+--   * Policies that use scope_id, the session setting they read, and who may cross
+--     scopes belong to the access + tenancy module (pr-007), roadmap item
+--     scope-boundary-enforcement.
+-- Groups of people (organizations, members, roles) belong to that module too, not the spine.
 --
--- Requires PostgreSQL 13 or later (gen_random_uuid is built in). Safe to apply to an empty
--- database more than once. Apply it with `lens-core new`, which records the version below
--- and does not re-apply it to a lab already at this version: re-running the security
--- defaults on a live lab would remove grants that the access + tenancy module added.
+-- Requires PostgreSQL 15 or later (ON DELETE SET NULL with a column list). Safe to apply
+-- to an empty database more than once. Apply it with `lens-core new`, which records the
+-- version below and does not re-apply it to a lab already at this version: re-running the
+-- security defaults on a live lab would remove grants that the access + tenancy module
+-- added.
 --
--- lens-standard-version: 0.1.0
+-- lens-standard-version: 0.2.0
 
 -- ---------------------------------------------------------------------------
 -- Lineage: where a candidate came from, kept separate from the claim itself.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sources (
     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    scope_id      uuid NOT NULL,
     uri           text,                 -- where the material was read from
     snapshot      jsonb,                -- raw captured payload, for audit
-    fetched_at    timestamptz NOT NULL DEFAULT now()
+    fetched_at    timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (id, scope_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -46,14 +59,17 @@ CREATE TABLE IF NOT EXISTS sources (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS candidates (
     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    source_id     uuid REFERENCES sources(id),
+    scope_id      uuid NOT NULL,
+    source_id     uuid,
     kind          text NOT NULL,        -- neutral type set, defined per lab (injected)
     payload       jsonb NOT NULL,       -- the finding
     evidence      jsonb,                -- quote or reference supporting it
     confidence    real CHECK (confidence IS NULL OR confidence BETWEEN 0 AND 1),
     status        text NOT NULL DEFAULT 'pending'
                     CHECK (status IN ('pending','accepted','rejected','needs_context','merged')),
-    created_at    timestamptz NOT NULL DEFAULT now()
+    created_at    timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (id, scope_id),
+    FOREIGN KEY (source_id, scope_id) REFERENCES sources (id, scope_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -62,7 +78,8 @@ CREATE TABLE IF NOT EXISTS candidates (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS decisions (
     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    candidate_id  uuid NOT NULL REFERENCES candidates(id),
+    scope_id      uuid NOT NULL,
+    candidate_id  uuid NOT NULL,
     action        text NOT NULL
                     CHECK (action IN ('accept','reject','edit','merge','flag')),
     actor         text NOT NULL,        -- who decided
@@ -72,7 +89,8 @@ CREATE TABLE IF NOT EXISTS decisions (
     before        jsonb,
     after         jsonb,
     created_at    timestamptz NOT NULL DEFAULT now(),
-    UNIQUE (id, candidate_id, action)   -- lets verified point at one accept decision
+    UNIQUE (id, candidate_id, action, scope_id),  -- lets verified point at one accept decision
+    FOREIGN KEY (candidate_id, scope_id) REFERENCES candidates (id, scope_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -81,9 +99,9 @@ CREATE TABLE IF NOT EXISTS decisions (
 --
 -- The review and promotion contract, enforced by the database: every verified entry
 -- names the candidate it came from and the decision that accepted it, and that decision
--- must be an 'accept' on that same candidate. Imports follow the same path (record a
--- candidate and an accept decision by the importer). The composite foreign key does this
--- without triggers.
+-- must be an 'accept' on that same candidate, in the same scope. Imports follow the same
+-- path (record a candidate and an accept decision by the importer). The composite foreign
+-- key does this without triggers.
 --
 -- Not enforced here (no triggers; the writer's job, checked by lens-review's tests):
 --   * the candidate's status being 'accepted';
@@ -91,6 +109,7 @@ CREATE TABLE IF NOT EXISTS decisions (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS verified (
     id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    scope_id         uuid NOT NULL,
     canonical_key    text NOT NULL,
     kind             text NOT NULL,
     payload          jsonb NOT NULL,
@@ -99,32 +118,43 @@ CREATE TABLE IF NOT EXISTS verified (
     decision_action  text NOT NULL DEFAULT 'accept' CHECK (decision_action = 'accept'),
     provenance       jsonb,             -- further trail (sources, merged decisions)
     is_current       boolean NOT NULL DEFAULT true,
-    superseded_by    uuid REFERENCES verified(id),
+    superseded_by    uuid,
     verified_by      text,
     verified_at      timestamptz NOT NULL DEFAULT now(),
-    FOREIGN KEY (decision_id, candidate_id, decision_action)
-        REFERENCES decisions (id, candidate_id, action)
+    UNIQUE (id, scope_id),
+    FOREIGN KEY (decision_id, candidate_id, decision_action, scope_id)
+        REFERENCES decisions (id, candidate_id, action, scope_id),
+    FOREIGN KEY (superseded_by, scope_id) REFERENCES verified (id, scope_id)
 );
+
+-- One current entry per canonical key within a scope.
+CREATE UNIQUE INDEX IF NOT EXISTS verified_current_key_per_scope
+    ON verified (scope_id, canonical_key) WHERE is_current;
 
 -- ---------------------------------------------------------------------------
 -- Relationships: verified links between two verified entries (the graph's edges).
 -- The one home for relationships. The kind (e.g. same concept, wraps, depends on) is
--- defined per lab. One row per ordered pair and kind.
+-- defined per lab. One row per ordered pair and kind; both ends are in the row's scope.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS relationships (
     id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    from_id        uuid NOT NULL REFERENCES verified(id) ON DELETE CASCADE,
-    to_id          uuid NOT NULL REFERENCES verified(id) ON DELETE CASCADE,
+    scope_id       uuid NOT NULL,
+    from_id        uuid NOT NULL,
+    to_id          uuid NOT NULL,
     kind           text NOT NULL,
     confidence     real NOT NULL CHECK (confidence BETWEEN 0 AND 1),
     evidence       jsonb,               -- why the link holds
-    source_id      uuid REFERENCES sources(id),
-    candidate_id   uuid REFERENCES candidates(id),  -- the candidate it was promoted from
+    source_id      uuid,
+    candidate_id   uuid,                -- the candidate it was promoted from
     validated_by   text,
     validated_at   timestamptz,
     created_at     timestamptz NOT NULL DEFAULT now(),
     CHECK (from_id <> to_id),
-    UNIQUE (from_id, to_id, kind)
+    UNIQUE (from_id, to_id, kind),
+    FOREIGN KEY (from_id, scope_id) REFERENCES verified (id, scope_id) ON DELETE CASCADE,
+    FOREIGN KEY (to_id, scope_id) REFERENCES verified (id, scope_id) ON DELETE CASCADE,
+    FOREIGN KEY (source_id, scope_id) REFERENCES sources (id, scope_id),
+    FOREIGN KEY (candidate_id, scope_id) REFERENCES candidates (id, scope_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -134,11 +164,12 @@ CREATE TABLE IF NOT EXISTS relationships (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS enrichments (
     id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    verified_id          uuid NOT NULL REFERENCES verified(id) ON DELETE CASCADE,
+    scope_id             uuid NOT NULL,
+    verified_id          uuid NOT NULL,
     kind                 text NOT NULL
                            CHECK (kind IN ('alias','merge','cross_source','update','refinement')),
-    from_verified_id     uuid REFERENCES verified(id) ON DELETE SET NULL,  -- merged from
-    candidate_id         uuid REFERENCES candidates(id),
+    from_verified_id     uuid,          -- merged from; cleared if that entry is deleted
+    candidate_id         uuid,
     alias                text,          -- required when kind = 'alias'
     merged               jsonb,         -- attributes taken from the merged entry
     conflict_resolution  jsonb,         -- how conflicts were resolved
@@ -146,7 +177,11 @@ CREATE TABLE IF NOT EXISTS enrichments (
     actor                text NOT NULL, -- who or what enriched it
     notes                text,
     created_at           timestamptz NOT NULL DEFAULT now(),
-    CHECK (kind <> 'alias' OR alias IS NOT NULL)
+    CHECK (kind <> 'alias' OR alias IS NOT NULL),
+    FOREIGN KEY (verified_id, scope_id) REFERENCES verified (id, scope_id) ON DELETE CASCADE,
+    FOREIGN KEY (from_verified_id, scope_id) REFERENCES verified (id, scope_id)
+        ON DELETE SET NULL (from_verified_id),
+    FOREIGN KEY (candidate_id, scope_id) REFERENCES candidates (id, scope_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -155,34 +190,52 @@ CREATE TABLE IF NOT EXISTS enrichments (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS oversight_capabilities (
     id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    scope_id              uuid NOT NULL,
     agent_name            text NOT NULL,
     capability_type       text NOT NULL,
     trust_score           real NOT NULL DEFAULT 0,
     auto_approve_threshold real,
     requires_review       boolean NOT NULL DEFAULT true,
-    UNIQUE (agent_name, capability_type)
+    UNIQUE (id, scope_id),
+    UNIQUE (scope_id, agent_name, capability_type)
 );
 
 CREATE TABLE IF NOT EXISTS oversight_proposals (
     id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    capability_id  uuid REFERENCES oversight_capabilities(id),
+    scope_id       uuid NOT NULL,
+    capability_id  uuid,
     proposed       jsonb NOT NULL,
     rationale      text,
     status         text NOT NULL DEFAULT 'pending'
                      CHECK (status IN ('pending','approved','rejected','auto_approved','implemented','reverted')),
-    created_at     timestamptz NOT NULL DEFAULT now()
+    created_at     timestamptz NOT NULL DEFAULT now(),
+    FOREIGN KEY (capability_id, scope_id) REFERENCES oversight_capabilities (id, scope_id)
 );
 
 CREATE TABLE IF NOT EXISTS oversight_trust_history (
     id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    capability_id  uuid REFERENCES oversight_capabilities(id),
+    scope_id       uuid NOT NULL,
+    capability_id  uuid,
     delta          real NOT NULL,
     reason         text,
-    created_at     timestamptz NOT NULL DEFAULT now()
+    created_at     timestamptz NOT NULL DEFAULT now(),
+    FOREIGN KEY (capability_id, scope_id) REFERENCES oversight_capabilities (id, scope_id)
 );
 
+-- Scope filters: every scoped table is indexed by scope first.
+CREATE INDEX IF NOT EXISTS sources_scope_idx ON sources (scope_id);
+CREATE INDEX IF NOT EXISTS candidates_scope_idx ON candidates (scope_id);
+CREATE INDEX IF NOT EXISTS decisions_scope_idx ON decisions (scope_id);
+CREATE INDEX IF NOT EXISTS verified_scope_idx ON verified (scope_id);
+CREATE INDEX IF NOT EXISTS relationships_scope_idx ON relationships (scope_id);
+CREATE INDEX IF NOT EXISTS enrichments_scope_idx ON enrichments (scope_id);
+CREATE INDEX IF NOT EXISTS oversight_capabilities_scope_idx ON oversight_capabilities (scope_id);
+CREATE INDEX IF NOT EXISTS oversight_proposals_scope_idx ON oversight_proposals (scope_id);
+CREATE INDEX IF NOT EXISTS oversight_trust_history_scope_idx ON oversight_trust_history (scope_id);
+
 -- ---------------------------------------------------------------------------
--- Which version of this standard a lab is on. Written by `lens-core new`.
+-- Which version of this standard a lab is on. Written by `lens-core new`. Not scoped: it
+-- describes the lab, not any one scope.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS standard_version (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
