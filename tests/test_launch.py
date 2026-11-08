@@ -59,7 +59,7 @@ def test_refuses_a_different_recorded_version(db, db_url, capsys):
     assert launch.main(["new", "--db-url", db_url]) == 0
     db.execute("UPDATE standard_version SET version = '0.0.0-old'")
     assert launch.main(["new", "--db-url", db_url]) == 2
-    assert "upgrade" in capsys.readouterr().err
+    assert "upgrade" in capsys.readouterr().err.lower()
 
 
 def test_shape_check_reports_missing_columns(db, db_url):
