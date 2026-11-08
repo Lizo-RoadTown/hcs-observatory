@@ -81,14 +81,15 @@ items:
     evidence: [lens-core 79f1010]
 
   - id: install-lens-log-everywhere
-    title: Install or update lens-log to 0.1.5 in every Lens repo
-    outcome: The hooks actually run in each repo (settings alone only enable them).
+    title: Install lens-log 0.1.5 for every repo (user scope)
+    outcome: The hooks run in every repo that declares a decomposition.json, at one version, with no per-repo install.
     horizon: now
     firmness: firm
-    status: proposed
+    status: done
     owner: operator
-    exit_check: "human: /plugin shows lens-log 0.1.5 installed in lens-core, the four siblings and surveyor"
-    revisit_trigger: a session shows an older lens-log version in its hook messages
+    exit_check: "installed_plugins.json has one lens-log row, scope user, version 0.1.5; user settings enable it"
+    evidence: ["user-scope install 2026-11-07, 0.1.5; stale project rows (lens-core 0.1.5, education-lab 0.1.4, surveyor 0.1.2) removed; backup installed_plugins.json.bak-2026-11-07-lens-log-global"]
+    revisit_trigger: a session shows an older lens-log version in its hook messages, or a new machine is set up
 
   - id: log-index-action
     title: Log-index GitHub Action

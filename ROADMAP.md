@@ -10,7 +10,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | rotate-proves-key | Rotate the committed PROVES service_role key | The key committed in PROVES_LIBRARY scripts no longer authenticates. | operator | firm | proposed |  | human: Supabase shows the old service_role key revoked |
-| install-lens-log-everywhere | Install or update lens-log to 0.1.5 in every Lens repo | The hooks actually run in each repo (settings alone only enable them). | operator | firm | proposed |  | human: /plugin shows lens-log 0.1.5 installed in lens-core, the four siblings and surveyor |
 | ingest-derives-plan | lens-ingest works its source and records its own plan | lens-ingest has a plan it derived from PROVES, recorded in its log. | lens-ingest | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-ingest docs/log naming its derived plan |
 | review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
 | serve-derives-plan | lens-serve works its source and records its own plan | lens-serve has a plan it derived from PROVES, recorded in its log. | lens-serve | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-serve docs/log naming its derived plan |
@@ -53,6 +52,7 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | lens-log-silent-loss-fixes | Fix lens-log M6, M7, M8 | surveyor | done | surveyor a984e18 |
 | module-map-check | Module-map change needs an evaluation (lens-log D11) | surveyor | done | surveyor a5910e3, lens-core 4ee947b |
 | roadmap-as-data | Roadmap as data with checks | lens-core | done | lens-core 79f1010 |
+| install-lens-log-everywhere | Install lens-log 0.1.5 for every repo (user scope) | operator | done | user-scope install 2026-11-07, 0.1.5; stale project rows (lens-core 0.1.5, education-lab 0.1.4, surveyor 0.1.2) removed; backup installed_plugins.json.bak-2026-11-07-lens-log-global |
 | log-index-action | Log-index GitHub Action | lens-core | done | lens-core 49e43dd, log-index run 39726154238 green; bot rebuilt INDEX.md in 3664af3, consistency failure covered by tests/test_log_index.py |
 | roadmap-check-in-ci | Run the roadmap check in CI | lens-core | done | lens-core 10a8896, CI run 39609823937 passed on main, CI run 39609904466 failed on a deliberately broken roadmap (PR 1, closed) |
 | lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | surveyor | done | surveyor 5d1e804, 92 tests pass, lizo-skills marketplace 2a7036a |
