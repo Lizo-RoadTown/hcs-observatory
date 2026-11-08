@@ -10,6 +10,7 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | rotate-proves-key | Rotate the committed PROVES service_role key | The key committed in PROVES_LIBRARY scripts no longer authenticates. | operator | firm | proposed |  | human: Supabase shows the old service_role key revoked |
+| spine-scope-column | Scope column on every spine table (standard 0.2.0) | Every row belongs to exactly one opaque scope (a registry project id or a carried person id), no reference crosses scopes, and canonical_key is unique per scope. | lens-core | firm | in-progress |  | tests/test_spine.py scope tests pass against Postgres in CI; launcher records standard 0.2.0 |
 | ingest-derives-plan | lens-ingest works its source and records its own plan | lens-ingest has a plan it derived from PROVES, recorded in its log. | lens-ingest | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-ingest docs/log naming its derived plan |
 | review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
 | serve-derives-plan | lens-serve works its source and records its own plan | lens-serve has a plan it derived from PROVES, recorded in its log. | lens-serve | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-serve docs/log naming its derived plan |
@@ -20,7 +21,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
-| spine-scope-column | Scope column on every spine table, neutral about scale | Every row is scoped (to a project or a person) so isolation can be enforced. | lens-core | loose | proposed |  | decide when: where the personal-to-project boundary is enforced is settled (with Tapestry); must land before spine v1 |
 | oversight-tables-home | Decide whether the oversight tables stay in the spine | lens-core does not absorb workflow oversight's territory by accident. | lens-core | loose | proposed |  | decide when: the workflow oversight repo is named and has worked its source |
 | observe-signal-vocabulary | One signal package, lens-observe as its program-layer instance | lens-observe instantiates the shared scale-neutral signal package (tapestry pl-001) instead of building a second classifier. | lens-observe | loose | proposed |  | decide when: tapestry proposes the pl-001 package; evaluate it against the spine (direction set in tapestry docs/plans/2026-10-21-master-plan-personal-loop.md section F) |
 | tenancy-home | One home for tenancy | Tenancy is owned once (access + tenancy, Loom_MCP or project-registry). | operator | loose | proposed |  | decide when: Tapestry's breakdown names the Loom_MCP and registry homes |
@@ -30,6 +30,7 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
+| scope-boundary-enforcement | Enforce the personal and project boundary (policies, crossings, public projects) | Row policies use scope_id; crossing between scopes is authorized and recorded; a public project is kept apart from its owner's personal data. | access + tenancy | loose | proposed | spine-scope-column | decide when: the operator settles the owner rule for public projects, and the tenancy-home decision names where scope ids live |
 | name-proposed-repos | Final names for the two proposed repos | workflow oversight and access + tenancy get their final names once the whole decomposition is reconciled. | operator | loose | proposed |  | decide when: the full agreed decomposition is reconciled (tapestry prototype-reconstruction-procedure v0.1, step 8); stable IDs and descriptive labels until then |
 | access-tenancy-repo | Access + tenancy module | Organizations, members, roles, sign-in and row security exist as one module. | access + tenancy | firm | proposed | spine-scope-column | a second org cannot see the first org's rows (test) |
 | workflow-oversight-repo | Workflow oversight module (pluggable slot) | An agent team that watches pipeline and dashboard health and agent trust, swappable without touching the dashboard. | workflow oversight | loose | proposed | oversight-tables-home | decide when: the repo is named and has worked its source |

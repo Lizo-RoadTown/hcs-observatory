@@ -109,6 +109,19 @@ and within a project database `scope_id` keeps projects apart. Forced separation
 projects belongs to the boundary-enforcement item. Question 2 (one shared id registry) stays
 with Tapestry.
 
+## Tapestry's answer to question 2 (2026-11-08)
+
+Loom memory `decision-scope-ids-two-authorities-2026-11-08`, citations checked:
+- **Project ids come from one shared registry.** The project registry mints random UUIDs
+  (`tapestry/infra/migrations/002_init_projects.sql:14-15`), and every onboarded repo already
+  holds its UUID. A Lens project's `scope_id` should be its registry project id, so it means
+  the same thing in the Lens, Tapestry and the shared graph.
+- **Person ids are an auth-layer constant,** the same across Tapestry's services
+  (`tapestry/packages/auth/python/loom_auth/auth_bridge.py:94-110`), not a registry row. The
+  Lens carries a person id as given and never mints its own.
+- Whether people also get rows in one unified registry is the open tenancy-home decision. The
+  opaque `scope_id` does not depend on it.
+
 ## Proposed roadmap change
 
 Split `spine-scope-column`:
