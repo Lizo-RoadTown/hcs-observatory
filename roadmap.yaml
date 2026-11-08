@@ -185,10 +185,11 @@ items:
     outcome: The standard starts closed and has no broken trigger.
     horizon: now
     firmness: firm
-    status: proposed
+    status: done
     owner: lens-core
     touches_bus: [docs/schema/spine.sql]
     exit_check: "schema test: anon has no grants; all triggers compile"
+    evidence: [lens-core 1658ab2, "tests/test_spine.py::test_hosted_roles_and_strangers_get_nothing, CI run 42440991778 (32 passed)"]
 
   - id: launcher-applies-spine
     title: Launcher applies the spine
