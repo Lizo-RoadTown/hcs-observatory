@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | e77bd55 |
+| lens-core | 51815e2 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -41,10 +41,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (54)
+## Entries (55)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-09T02:18 | lens-core | decision | architecture | Target architecture: six modules (operator's final version) | [2026-11-09-0218-target-six-modules.md](entries/2026-11-09-0218-target-six-modules.md) |
 | 2026-11-09T02:15 | lens-core | decision | architecture | Target architecture corrected: six components | [2026-11-09-0215-target-architecture-six.md](entries/2026-11-09-0215-target-architecture-six.md) |
 | 2026-11-09T02:14 | lens-core | decision | architecture | Agreed target architecture: five components, recorded | [2026-11-09-0214-target-architecture.md](entries/2026-11-09-0214-target-architecture.md) |
 | 2026-11-09T01:45 | lens-core | decision | roadmap | Sibling plans held pending the adaptive-layer decomposition evaluation | [2026-11-09-0145-hold-siblings-for-evaluation.md](entries/2026-11-09-0145-hold-siblings-for-evaluation.md) |
