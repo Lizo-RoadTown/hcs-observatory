@@ -337,11 +337,12 @@ items:
     title: Settle what "Lens" means across the system
     outcome: Tapestry's proposal and the approved architecture agree.
     horizon: now
-    firmness: loose
-    status: proposed
+    firmness: firm
+    status: done
     owner: operator
     consumers: [tapestry]
-    decide_when: the operator rules on Tapestry's "Lens = the interface" line (tapestry docs/proposals/2026-10-20-loom-mcp-module.md:11-13)
+    exit_check: "human: operator ruling recorded"
+    evidence: ["loom memory decision-lens-is-the-observatory-memory-is-the-database-2026-11-09: the Lens is the observatory (interface layer + adaptive agents that observe Memory and fix projects by rules); Memory is the database"]
 
   - id: tenancy-home
     title: One home for tenancy

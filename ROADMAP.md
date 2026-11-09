@@ -14,7 +14,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
 | serve-derives-plan | lens-serve works its source and records its own plan | lens-serve has a plan it derived from PROVES, recorded in its log. | lens-serve | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-serve docs/log naming its derived plan |
 | observe-derives-plan | lens-observe works its source and records its own plan | lens-observe has a plan it derived from PROVES, recorded in its log. | lens-observe | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-observe docs/log naming its derived plan |
-| lens-meaning | Settle what "Lens" means across the system | Tapestry's proposal and the approved architecture agree. | operator | loose | proposed |  | decide when: the operator rules on Tapestry's "Lens = the interface" line (tapestry docs/proposals/2026-10-20-loom-mcp-module.md:11-13) |
 
 ## Next
 
@@ -59,3 +58,4 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | spine-security-defaults | No anonymous grants; remove the source_id trigger bug | lens-core | done | lens-core 1658ab2, tests/test_spine.py::test_hosted_roles_and_strangers_get_nothing, CI run 42440991778 (32 passed) |
 | launcher-applies-spine | Launcher applies the spine | lens-core | done | lens-core cf7485b, lens-core 6fa0566, CI run 42453587108: 47 passed; installed wheel printed lens-core 0.0.1 (standard 0.1.0) |
 | program-layer-ids | Stable pr- component IDs for the program layer | lens-core | done | lens-core decomposition.json ids (pr-001 to pr-007), enforced by scripts/roadmap.py check_ids |
+| lens-meaning | Settle what "Lens" means across the system | operator | done | loom memory decision-lens-is-the-observatory-memory-is-the-database-2026-11-09: the Lens is the observatory (interface layer + adaptive agents that observe Memory and fix projects by rules); Memory is the database |
