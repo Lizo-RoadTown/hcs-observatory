@@ -223,40 +223,44 @@ items:
     outcome: lens-ingest has a plan it derived from PROVES, recorded in its log.
     horizon: now
     firmness: firm
-    status: proposed
+    status: blocked
     owner: lens-ingest
     depends_on: [siblings-under-lens-log]
     exit_check: "a decision or process entry in lens-ingest docs/log naming its derived plan"
+    revisit_trigger: the 2026-11-09 decomposition evaluation (adaptive-layer merge) settles where this module belongs
 
   - id: review-derives-plan
     title: lens-review works its source and records its own plan
     outcome: lens-review has a plan it derived from PROVES, recorded in its log.
     horizon: now
     firmness: firm
-    status: proposed
+    status: blocked
     owner: lens-review
     depends_on: [siblings-under-lens-log]
     exit_check: "a decision or process entry in lens-review docs/log naming its derived plan"
+    revisit_trigger: the 2026-11-09 decomposition evaluation (adaptive-layer merge) settles where this module belongs
 
   - id: serve-derives-plan
     title: lens-serve works its source and records its own plan
     outcome: lens-serve has a plan it derived from PROVES, recorded in its log.
     horizon: now
     firmness: firm
-    status: proposed
+    status: blocked
     owner: lens-serve
     depends_on: [siblings-under-lens-log]
     exit_check: "a decision or process entry in lens-serve docs/log naming its derived plan"
+    revisit_trigger: the 2026-11-09 decomposition evaluation (adaptive-layer merge) settles where this module belongs
 
   - id: observe-derives-plan
     title: lens-observe works its source and records its own plan
     outcome: lens-observe has a plan it derived from PROVES, recorded in its log.
     horizon: now
     firmness: firm
-    status: proposed
+    status: blocked
     owner: lens-observe
     depends_on: [siblings-under-lens-log]
     exit_check: "a decision or process entry in lens-observe docs/log naming its derived plan"
+    revisit_trigger: the 2026-11-09 decomposition evaluation (adaptive-layer merge) settles where this module belongs
 
   - id: name-proposed-repos
     title: Final names for the two proposed repos

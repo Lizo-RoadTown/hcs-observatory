@@ -10,10 +10,10 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | rotate-proves-key | Rotate the committed PROVES service_role key | The key committed in PROVES_LIBRARY scripts no longer authenticates. | operator | firm | proposed |  | human: Supabase shows the old service_role key revoked |
-| ingest-derives-plan | lens-ingest works its source and records its own plan | lens-ingest has a plan it derived from PROVES, recorded in its log. | lens-ingest | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-ingest docs/log naming its derived plan |
-| review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
-| serve-derives-plan | lens-serve works its source and records its own plan | lens-serve has a plan it derived from PROVES, recorded in its log. | lens-serve | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-serve docs/log naming its derived plan |
-| observe-derives-plan | lens-observe works its source and records its own plan | lens-observe has a plan it derived from PROVES, recorded in its log. | lens-observe | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-observe docs/log naming its derived plan |
+| ingest-derives-plan | lens-ingest works its source and records its own plan | lens-ingest has a plan it derived from PROVES, recorded in its log. | lens-ingest | firm | blocked | siblings-under-lens-log | a decision or process entry in lens-ingest docs/log naming its derived plan |
+| review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | blocked | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
+| serve-derives-plan | lens-serve works its source and records its own plan | lens-serve has a plan it derived from PROVES, recorded in its log. | lens-serve | firm | blocked | siblings-under-lens-log | a decision or process entry in lens-serve docs/log naming its derived plan |
+| observe-derives-plan | lens-observe works its source and records its own plan | lens-observe has a plan it derived from PROVES, recorded in its log. | lens-observe | firm | blocked | siblings-under-lens-log | a decision or process entry in lens-observe docs/log naming its derived plan |
 
 ## Next
 
