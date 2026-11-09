@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 51815e2 |
+| lens-core | a1c7992 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -41,10 +41,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (55)
+## Entries (56)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-09T09:24 | lens-core | decision | roadmap | lens-core hand-offs proposed under the six-module target | [2026-11-09-0924-handoffs-proposed.md](entries/2026-11-09-0924-handoffs-proposed.md) |
 | 2026-11-09T02:18 | lens-core | decision | architecture | Target architecture: six modules (operator's final version) | [2026-11-09-0218-target-six-modules.md](entries/2026-11-09-0218-target-six-modules.md) |
 | 2026-11-09T02:15 | lens-core | decision | architecture | Target architecture corrected: six components | [2026-11-09-0215-target-architecture-six.md](entries/2026-11-09-0215-target-architecture-six.md) |
 | 2026-11-09T02:14 | lens-core | decision | architecture | Agreed target architecture: five components, recorded | [2026-11-09-0214-target-architecture.md](entries/2026-11-09-0214-target-architecture.md) |
