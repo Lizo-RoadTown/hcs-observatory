@@ -1,106 +1,94 @@
-# Target architecture: the six components
+# Target architecture: six modules
 
-**Status:** agreed by the operator, 2026-11-09. This is the target. The existing repos hold parts
-of it; consolidation, the full observatory controls and the closed adaptation loop still need
-building. Recorded in loom memory as `decision-target-architecture-five-components-2026-11-09`.
-Supersedes the layer descriptions in [`observatories.md`](observatories.md) where they differ.
-This doc moves to the combined observatory repo once its home and name are chosen.
+**Status:** the agreed target (operator, 2026-11-09). Recorded in loom memory as
+`decision-target-architecture-six-modules-2026-11-09`. It supersedes the earlier five-component
+drafts of the same day and the layer descriptions in [`observatories.md`](observatories.md).
+Which existing code goes to which module, and what is missing, is in the implementation map:
+`surveyor/docs/decomposition/2026-11-09-implementation-map.md`. This doc moves to the
+observatory interface's repo once its home is chosen.
 
-The whole system has **six components** (the operator's corrected list; it first read five),
-with the observatory interface being where you see and adjust it.
+The system has **six modules**. Personal and team use share implementations, while their data
+and permissions remain separate. Domains (education, onboarding, project work) configure the
+adaptive engine.
 
 ```mermaid
 flowchart TB
-    U["You or your team"]
-    O["Observatory interface<br/>Visualizations · settings · customization"]
-    A["Adaptive engine<br/>Observe · identify needs · propose improvements"]
-    D["Domain packages<br/>Education · onboarding · project work"]
-    M["Loom_MCP<br/>Working memory"]
-    Q["QuickPrime<br/>Verified project knowledge graph"]
-    S["Surveyor<br/>Structure · decomposition · interfaces"]
-    T["Tapestry<br/>Coordination · execution"]
-    P["Projects, agents, skills, and tools"]
+    USER["You / your team"]
 
-    U <--> O
-    subgraph COMBINED["Combined observatory repo — Lens + education-lab"]
-        O
-        A
-        D
-        D --> A
-        O -->|"Attention and adaptation settings"| A
-        A -->|"Findings and proposals"| O
-    end
+    UI["Observatory interface<br/>Visualize · inspect · customize · approve"]
 
-    M -->|"Authorized context"| A
-    Q -->|"Accepted project knowledge"| A
-    S -->|"Structural understanding"| A
-    A -->|"Proposed improvements"| T
-    O -->|"Approvals and execution limits"| T
-    T -->|"Build, validate, install, coordinate"| P
-    P -->|"Telemetry and results"| O
-    P -->|"Evidence for adaptation"| A
-    P -->|"Record working knowledge"| M
-    M -->|"Selected project contributions through review"| Q
-    O <-->|"Inspect and review project knowledge"| Q
+    MEMORY["Loom_MCP — Working memory<br/>Remember · search · recall"]
+    GRAPH["QuickPrime — Project knowledge graph<br/>Candidates · review history · verified knowledge"]
+    ADAPT["Adaptive engine + domain packages<br/>Learn needs · detect friction · propose improvements<br/>Education · onboarding · other domains"]
+    STRUCT["Surveyor — Decomposition<br/>Structure · responsibilities · interfaces"]
+    EXEC["Tapestry — Coordination and execution<br/>Coordinate · build · validate · install"]
+
+    WORK["Projects · agents · skills · tools"]
+
+    USER <--> UI
+
+    MEMORY -->|"Authorized context"| ADAPT
+    GRAPH -->|"Verified knowledge"| ADAPT
+    STRUCT -->|"Structural understanding"| ADAPT
+    WORK -->|"Reports and evidence"| ADAPT
+
+    ADAPT -->|"Proposed improvements"| EXEC
+    EXEC -->|"Authorized changes"| WORK
+    WORK -->|"Results inform the next cycle"| ADAPT
+
+    WORK -->|"Record working knowledge"| MEMORY
+    MEMORY -->|"Deliberately shared contributions"| GRAPH
+
+    MEMORY <-->|"Inspect and manage"| UI
+    GRAPH <-->|"Explore and review"| UI
+    STRUCT <-->|"Explore structure"| UI
+    ADAPT <-->|"Findings and attention settings"| UI
+    EXEC <-->|"Status, approvals, execution settings"| UI
+    WORK -->|"Telemetry"| UI
 ```
 
-| Component | Responsibility |
-|---|---|
-| **Loom_MCP — Memory** | Store and retrieve working knowledge for personal or team use |
-| **QuickPrime — Verified knowledge graph** | Hold reviewed project knowledge, relationships, evidence, and decision history |
-| **Adaptive engine + domains** | Learn needs, detect friction, and propose improvements using education, onboarding, or other domain rules |
-| **Observatory interface** | Visualize telemetry and knowledge; inspect proposals and results; customize settings, attention, skill creation, and automation |
-| **Surveyor — Decomposition** | Identify structures, responsibilities, and interfaces |
-| **Tapestry — Coordination and execution** | Coordinate agents and carry authorized improvements into use |
+| Module | Owns | Repo direction |
+|---|---|---|
+| **Working memory** | Recording, retrieval, recall, and search. Supports personal and team instances. | **Loom_MCP** |
+| **Verified project knowledge** | Admission of contributions, supporting evidence, review decisions, accepted knowledge, relationships, and version history. | **QuickPrime** |
+| **Adaptive engine + domains** | Watching authorized evidence, learning needs, identifying friction, and proposing improvements. Domain packages supply specialized rules and methods. | Consolidate the relevant **Lens and education-lab machinery**; retain education as a domain inside it. Repo name remains open. |
+| **Observatory interface** | Visualization, exploration, customization, review, and controls across the system. | **Separate module**; repo home remains open. |
+| **Decomposition** | Discovering structure, assigning responsibilities, defining interfaces, and evaluating architectural changes. | **Surveyor** |
+| **Coordination and execution** | Connecting components, equipping agents, scheduling work, and carrying authorized changes through validation and installation. | **Tapestry** |
 
-The operator's corrected list (2026-11-09): the adaptive engine with its domains, and the
-observatory interface, are **two separate components**. Whether they share one repo (the
-combined Lens and education-lab repo) or have one each is still to settle, along with the name.
+## What you control through the observatory
 
-## Control
+- **Attention:** what gets watched, how often, investigation depth, and notification thresholds.
+- **Adaptation:** which domain rules apply, what triggers skill creation, and how improvements
+  are evaluated.
+- **Authority:** what runs automatically, what needs review, and what requires approval.
+- **Access:** which personal or project information each component may use.
+- **Knowledge review:** inspect contributions and evidence before accepting them into
+  QuickPrime.
 
-The observatory is where you control:
-- attention;
-- frequency;
-- notifications;
-- skill creation;
-- review requirements;
-- automation levels;
-- information access.
+The interface sends those settings to the module responsible for enforcing them:
+- the adaptive engine obeys attention and domain settings;
+- Tapestry enforces execution permissions;
+- Memory and QuickPrime enforce access to their data.
 
-Its settings govern the adaptive engine; Tapestry enforces the authority to act.
+## How the loop works
 
-## An example of the loop
+Suppose a team repeatedly struggles with handoffs:
 
-1. Repeated confusion during a course task produces evidence.
-2. The adaptive engine interprets it using the education domain's rules and proposes a change
-   to a teaching skill.
-3. You inspect the evidence and the proposal in the observatory.
-4. Tapestry applies the change within your permissions.
-5. Later telemetry shows whether it helped.
-6. Loom_MCP remembers the outcome.
+1. Project activity produces telemetry and reports.
+2. The adaptive engine identifies the recurring problem using the relevant domain rules,
+   authorized memory, and Surveyor's structural understanding.
+3. The observatory shows the evidence and proposed improvement.
+4. Tapestry builds, validates, and installs the authorized change, for example a handoff skill.
+5. Later activity shows whether the change helped. That evidence feeds the next adaptation
+   cycle.
+6. Loom_MCP remembers the outcome. Selected project knowledge can be reviewed and accepted into
+   QuickPrime.
 
-Knowledge deliberately contributed to a project can enter QuickPrime through review.
+**Personal versus team is a scope distinction; education versus onboarding is a domain
+distinction.** The observatory can present either scope, and the adaptive engine can use
+multiple domains. QuickPrime specifically serves verified **project** knowledge; the personal
+layer does not need its own equivalent.
 
-## Domain and scope are separate
-
-- **Domain:** education or onboarding decides the rules used to interpret needs.
-- **Scope:** personal or project decides whose information is accessible and who controls the
-  settings.
-- Sharing the implementation never automatically shares private data.
-
-## What exists today versus this target
-
-Source: Surveyor evaluation 4,
-`surveyor/docs/decomposition/evaluations/2026-11-09-five-components-and-the-adaptive-layer.md`.
-
-| Part | Today |
-|---|---|
-| Loom_MCP working memory | Live (personal). The team-instance capability is not yet built. Production moves from Tapestry at step P3. |
-| QuickPrime graph | Design and research only. It plans to use the spine (lens-core standard 0.2.0) as its store. |
-| Observatory interface | The Lens has none. Tapestry's web dashboard and observatory console exist and are proposed to move to the combined repo. |
-| Adaptive engine | Four separate watch, learn, propose loops: education-lab harvest and triage, Tapestry self-observer, Tapestry signal engine, and lens-observe (a stub). Nothing on a timer reads Loom_MCP. |
-| Domain packages | Education is working in education-lab (learning rules, triage, plugins). The others are not started. |
-| Surveyor | Working: method, lens-log, evaluations. |
-| Tapestry execution | Not built. Tapestry proposes and records today; policy does not apply changes. |
-| Observatory controls | Not built. |
+This is the target architecture. The next implementation map must assign existing code to these
+six homes and identify the missing pieces without treating current repo boundaries as fixed.
