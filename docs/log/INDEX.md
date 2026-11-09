@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | a1c7992 |
+| lens-core | 61ccd8a |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -41,10 +41,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (56)
+## Entries (57)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-09T09:49 | lens-core | decision | bus, module | H1/H2 accepted by QuickPrime (pending PR #1 merge); lens-core keeps its copy | [2026-11-09-0949-h1-h2-accepted-by-quickprime.md](entries/2026-11-09-0949-h1-h2-accepted-by-quickprime.md) |
 | 2026-11-09T09:24 | lens-core | decision | roadmap | lens-core hand-offs proposed under the six-module target | [2026-11-09-0924-handoffs-proposed.md](entries/2026-11-09-0924-handoffs-proposed.md) |
 | 2026-11-09T02:18 | lens-core | decision | architecture | Target architecture: six modules (operator's final version) | [2026-11-09-0218-target-six-modules.md](entries/2026-11-09-0218-target-six-modules.md) |
 | 2026-11-09T02:15 | lens-core | decision | architecture | Target architecture corrected: six components | [2026-11-09-0215-target-architecture-six.md](entries/2026-11-09-0215-target-architecture-six.md) |
