@@ -1,4 +1,4 @@
-# Target architecture: the five components
+# Target architecture: the six components
 
 **Status:** agreed by the operator, 2026-11-09. This is the target. The existing repos hold parts
 of it; consolidation, the full observatory controls and the closed adaptation loop still need
@@ -6,8 +6,8 @@ building. Recorded in loom memory as `decision-target-architecture-five-componen
 Supersedes the layer descriptions in [`observatories.md`](observatories.md) where they differ.
 This doc moves to the combined observatory repo once its home and name are chosen.
 
-The whole system has **five components**, with the observatory providing the interface through
-which you see and adjust it.
+The whole system has **six components** (the operator's corrected list; it first read five),
+with the observatory interface being where you see and adjust it.
 
 ```mermaid
 flowchart TB
@@ -44,13 +44,18 @@ flowchart TB
     O <-->|"Inspect and review project knowledge"| Q
 ```
 
-| Component / repo | What it owns |
+| Component | Responsibility |
 |---|---|
-| **Loom_MCP** | Working memory: record, recall, search, and retrieve knowledge. The same implementation can serve separate personal and team instances. |
-| **QuickPrime** | The **project's verified knowledge graph**: contributions, evidence, review decisions, accepted knowledge, relationships, and history. No personal equivalent is required. |
-| **Combined Lens + education-lab** (name to settle) | The **observatory interface**, **adaptive engine**, and **domain packages**. Shows what is happening, lets you adjust behavior, learns needs, and proposes improvements. |
-| **Surveyor** | Structural understanding: decomposes systems, identifies responsibilities and interfaces, and evaluates where functions belong. |
-| **Tapestry** | Central coordination and execution: connects the components, equips agents, and builds, validates, installs, or rolls back authorized improvements. |
+| **Loom_MCP — Memory** | Store and retrieve working knowledge for personal or team use |
+| **QuickPrime — Verified knowledge graph** | Hold reviewed project knowledge, relationships, evidence, and decision history |
+| **Adaptive engine + domains** | Learn needs, detect friction, and propose improvements using education, onboarding, or other domain rules |
+| **Observatory interface** | Visualize telemetry and knowledge; inspect proposals and results; customize settings, attention, skill creation, and automation |
+| **Surveyor — Decomposition** | Identify structures, responsibilities, and interfaces |
+| **Tapestry — Coordination and execution** | Coordinate agents and carry authorized improvements into use |
+
+The operator's corrected list (2026-11-09): the adaptive engine with its domains, and the
+observatory interface, are **two separate components**. Whether they share one repo (the
+combined Lens and education-lab repo) or have one each is still to settle, along with the name.
 
 ## Control
 
