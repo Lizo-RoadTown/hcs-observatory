@@ -143,6 +143,31 @@ many people's memories and observers connect to build one shared knowledge graph
 group of friends, each with observers over many projects, feeding one shared graph. It is not a
 game for now; the scope is the functionality.
 
+**Same shape, different scale and audience** (operator, 2026-11-09, loom memory
+`decision-personal-and-shared-memory-same-shape-2026-11-09`): a person's Memory takes in all of
+their projects and serves them; the team's shared Memory takes in what members' Memories hold
+about a shared project and serves the team. They are the same kind of thing at two scales,
+like the personal and project observatories. How much code they share is research for
+Loom_MCP, QuickPrime and Tapestry.
+
+```mermaid
+flowchart TB
+  subgraph SHARED["Shared project (team level)"]
+    SM[("Shared Memory<br/>the team's knowledge about the shared project")]
+  end
+  subgraph P1["One person (private)"]
+    A1["Personal project 1"] --> AM[("Their Memory")]
+    A2["Personal project 2"] --> AM
+    AS["Their work on the shared project"] --> AM
+  end
+  subgraph P2["A teammate (private)"]
+    B1["Personal project 1"] --> BM[("Teammate's Memory")]
+    BS["Their work on the shared project"] --> BM
+  end
+  AM -->|"only what is about the shared project"| SM
+  BM -->|"only what is about the shared project"| SM
+```
+
 ```mermaid
 flowchart TB
   QP[("QuickPrime: the shared knowledge graph<br/>many people, many projects")]
