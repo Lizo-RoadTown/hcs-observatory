@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 48c9f22 |
+| lens-core | 017db48 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -41,10 +41,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (49)
+## Entries (50)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-09T01:14 | lens-core | decision | architecture | Architecture: personal and shared Memory are the same shape at two scales | [2026-11-09-0114-memory-same-shape.md](entries/2026-11-09-0114-memory-same-shape.md) |
 | 2026-11-08T12:16 | lens-core | process | roadmap | Checked QuickPrime's project-feed proposal against the spine: two issues | [2026-11-08-1216-quickprime-feed-check.md](entries/2026-11-08-1216-quickprime-feed-check.md) |
 | 2026-11-08T12:09 | lens-core | decision | bus, module | Standard 0.2.0: every row has one scope; nothing points across scopes | [2026-11-08-1209-spine-scope-column.md](entries/2026-11-08-1209-spine-scope-column.md) |
 | 2026-11-08T12:01 | lens-core | decision | roadmap | Scope column made firm; boundary enforcement split out | [2026-11-08-1201-scope-column-firm.md](entries/2026-11-08-1201-scope-column-firm.md) |
