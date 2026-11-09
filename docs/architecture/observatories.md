@@ -1,5 +1,8 @@
 # Observatories: the project observatory and the personal ones
 
+**Superseded in part (2026-11-09):** the agreed five-component target is in
+[`target-architecture.md`](target-architecture.md); where the two differ, that doc wins.
+
 **Status:** approved by the operator (2026-10-21). It is the basis of the roadmap everyone
 works from. **For:** the Lens repos, Tapestry, Loom memory,
 and anyone building an observatory from these parts.
