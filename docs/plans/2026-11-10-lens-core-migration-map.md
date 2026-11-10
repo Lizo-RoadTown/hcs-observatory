@@ -27,11 +27,10 @@ review and controls across the system, for both personal and project scopes. It 
 
 | Piece | From | Live state | Notes |
 |---|---|---|---|
-| Web dashboard: candidates promote, hold, reject; Grafana | tapestry `apps/web-dashboard` | live on Vercel (`loom.humancensys.com`); uses `LOOM_DASHBOARD_JWT` | Move by changing the Vercel project's source repo, which keeps the domain and env vars. **Not during the first closed loop (P3)**, which uses its approve button (Tapestry conflict 1) |
+| Web dashboard: candidates promote, hold, reject; Grafana | **the-loom** `apps/web-dashboard` (the live copy, Vercel project `the-loom`; corrected 2026-11-10 per Tapestry) and tapestry `apps/web-dashboard` (not deployed) | live from the-loom's copy | First diff the two copies and pick the canonical one (the live one is the-loom's). Move that copy to lens-core, then repoint the `the-loom` Vercel project's source, which keeps the domain and env vars. Retire the other copy. **Not during the first closed loop**, which uses its approve button (Tapestry conflict 1) |
 | Observatory console | tapestry `apps/docs-site` `/observatory` | live on Vercel | Splits a live site: one `/observatory` redirect from the docs site, coordinated with Tapestry |
 | Admin console slot | tapestry `apps/admin-console` | empty slot | becomes the settings and controls area |
 | UI package | tapestry `packages/ui` | slot | shared components |
-| Legacy dashboard | the-loom `apps/web-dashboard` | not maintained | retire, after checking nothing reads it |
 | Review, library and graph screens | lens-review and lens-serve charters; PROVES dashboard (reference only) | design only | built against QuickPrime's contracts B and C |
 | CLI `observatory` link | tapestry `packages/cli` | live | stays in Tapestry and points at the interface's URL |
 
@@ -78,7 +77,8 @@ enforces it:
    - a self-view of what is collected about each person.
 
    These are interface requirements, not settings.
-4. **Timing.** Move the dashboard either before the first closed loop (P3) starts or after it
+4. **Timing.** Move the dashboard either before the first closed loop (the review plan's P3,
+   not Loom_MCP's P3 repoint) starts or after it
    finishes, never during it.
 5. **Two Vercel deployments.** The dashboard and console stay separate deploys after the move
    unless the operator wants them merged. Merging is a later choice, not part of the move.
@@ -87,11 +87,13 @@ enforces it:
 
 1. **(Others)** H6 (Surveyor), then H3 (Tapestry), then H4 (Surveyor).
 2. **lens-core:** one commit that flips its `decomposition.json` to a piece and removes the
-   roadmap and log-index files.
+   roadmap and log-index files. It keeps the spine and launcher test job of `roadmap.yml`
+   (lens-core's only test CI) until step 3 drops them, so the spine never runs without CI.
 3. **After QuickPrime PR #1 merges:** H5 (oversight to education-lab), then lens-core drops the
    spine, launcher and their tests, plus the `bus` field and surface, in one commit.
 4. **After the settings contract (P0 item 3) is accepted:** build the settings and controls area.
-5. **Before or after P3, not during:** move the web dashboard (Vercel source repoint), then the
+5. **Before or after the first closed loop, not during:** diff the two dashboard copies, move
+   the canonical one (Vercel `the-loom` source repoint), then the
    console (with the redirect).
 6. **Then:** the review, library and graph screens against QuickPrime's B and C; memory
    inspect; the structure view.
