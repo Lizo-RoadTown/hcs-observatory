@@ -4,8 +4,10 @@
 `decision-target-architecture-six-modules-2026-11-09`. It supersedes the earlier five-component
 drafts of the same day and the layer descriptions in [`observatories.md`](observatories.md).
 Which existing code goes to which module, and what is missing, is in the implementation map:
-`surveyor/docs/decomposition/2026-11-09-implementation-map.md`. This doc moves to the
-observatory interface's repo once its home is chosen.
+`surveyor/docs/decomposition/2026-11-09-implementation-map.md`. The observatory
+interface's home is this repo (settled 2026-11-10), so this doc stays here. Repos were renamed
+on 2026-11-10 with the `hcs-` prefix: this one is `hcs-observatory` (loom memory
+`decision-repo-renames-hcs-prefix-2026-11-10`).
 
 The system has **six modules**. Personal and team use share implementations, while their data
 and permissions remain separate. Domains (education, onboarding, project work) configure the
