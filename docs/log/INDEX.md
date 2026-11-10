@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | bfba8ea |
+| lens-core | b9aa4b2 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -41,10 +41,11 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 
 None.
 
-## Entries (58)
+## Entries (59)
 
 | date | module | type | surfaces | entry | file |
 |---|---|---|---|---|---|
+| 2026-11-10T02:02 | lens-core | process | roadmap | Correction: QuickPrime PR #1 is open, not merged; H5 before dropping the spine | [2026-11-10-0202-correct-h1-merge-status.md](entries/2026-11-10-0202-correct-h1-merge-status.md) |
 | 2026-11-10T01:59 | lens-core | decision | roadmap | Hand-off plan updated: settled homes; log index to Surveyor | [2026-11-10-0159-handoffs-updated-homes.md](entries/2026-11-10-0159-handoffs-updated-homes.md) |
 | 2026-11-09T09:49 | lens-core | decision | bus, module | H1/H2 accepted by QuickPrime (pending PR #1 merge); lens-core keeps its copy | [2026-11-09-0949-h1-h2-accepted-by-quickprime.md](entries/2026-11-09-0949-h1-h2-accepted-by-quickprime.md) |
 | 2026-11-09T09:24 | lens-core | decision | roadmap | lens-core hand-offs proposed under the six-module target | [2026-11-09-0924-handoffs-proposed.md](entries/2026-11-09-0924-handoffs-proposed.md) |
