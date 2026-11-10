@@ -1,3 +1,7 @@
+-- FROZEN (2026-11-10): superseded by QuickPrime standard 0.3.0 (hcs-project-knowledge-graph)
+-- for verified knowledge. Kept only until H5 moves the oversight tables to hcs-adaptive-engine.
+-- Do not change. Changes belong in QuickPrime's copy, or the engine's after H5.
+--
 -- The Lens: the shared database standard ("the spine"). v1 in progress (Phase B).
 --
 -- The fixed shape every Lens lab meets on. Domain-neutral by design: no subject-specific
