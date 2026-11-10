@@ -104,6 +104,14 @@ say so; the engine will honour it.
    console (with the redirect).
 6. **Then:** the review, library and graph screens against QuickPrime's B and C; memory
    inspect; the structure view.
+7. **Adopt base-module standard 0.2** (operator-approved; hcs-decomposition d6de99e,
+   `docs/reference/base-module-standard.md`) as part of becoming a web app:
+   - declare `kinds: ["interface"]`, `instances: "multiple"` and a `layout` mapping for the
+     web-app folders (open item 7.1, which lens-core proposes);
+   - add `tests/accessibility/`, `tests/interaction/`, `tests/privacy/` (aggregates, a personal
+     scope sees only its own person, no scope crossing) and the isolation test across personal
+     and project scopes;
+   - add `examples/embedded/`: a host mounts the views and supplies its own data clients.
 
 ## 6. Proposed charter (for the operator's approval; not applied)
 
