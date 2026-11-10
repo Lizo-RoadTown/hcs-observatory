@@ -1,4 +1,4 @@
-name: roadmap
+name: tests
 
 on:
   push:
@@ -28,9 +28,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "pytest>=8.0" "pyyaml>=6.0" "psycopg[binary]>=3.1"
-      - name: Roadmap is valid and ROADMAP.md is current
-        run: python scripts/roadmap.py check
+      - run: pip install "pytest>=8.0" "psycopg[binary]>=3.1"
       - name: Tests
         run: python -m pytest -q -rs tests
       - name: Installed package finds its bundled standard
