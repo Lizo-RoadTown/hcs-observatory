@@ -80,7 +80,6 @@ Also write what you needed and what is missing to loom-memory scoped to `lens-co
 
 ## 7. The roadmap
 
-What gets built, in what order, and how firm each item is lives in
-[`ROADMAP.md`](../ROADMAP.md), generated from [`roadmap.yaml`](../roadmap.yaml). Edit the YAML,
-then run `python scripts/roadmap.py render`; `python scripts/roadmap.py check` validates it.
+The system roadmap moved to coordination (hcs-coordination `roadmap/`, H3, PR #212, 2026-11-10),
+and the whole-system module list to decomposition (H6). lens-core is now a piece.
 Only **firm** items are built. Refer to items by id; don't copy them into memory or this file.
