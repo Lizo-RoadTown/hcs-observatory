@@ -1,61 +1,41 @@
-# lens-core
+# hcs-observatory (the observatory)
 
-**The Lens — main lab repo.**
+**Status:** being rebuilt. The observatory is the **interface** of a six-module system: where
+a person or team sees what the system observes, reviews findings, proposals and knowledge,
+and controls how the system behaves. Its identity and boundary are in
+[`CHARTER.md`](CHARTER.md).
 
-The Lens is a neutral, reusable "lab-in-a-box" for **systems discovery**: you launch a
-*lab* (a systems observatory) that reads a system's artifacts, stages candidate
-findings, has a human verify them, and serves a verified knowledge library.
+| Module | Repo | What it does |
+|---|---|---|
+| memory | `hcs-memory` | recording, retrieval, recall and search, personal and team |
+| project knowledge graph | `hcs-project-knowledge-graph` | admission, review and verified project knowledge |
+| adaptive engine | `hcs-adaptive-engine` | watches authorized evidence, finds friction, proposes improvements |
+| **observatory** | `hcs-observatory` (here) | visualization, review, settings and controls |
+| decomposition | `hcs-decomposition` | structure, responsibilities, interfaces, the base-module standard |
+| coordination | `hcs-coordination` | connects components, equips agents, executes approved changes |
 
-`lens-core` is the container you start a lab from. It holds:
+The architecture is in [`docs/architecture/target-architecture.md`](docs/architecture/target-architecture.md).
+The migration plan is in [`docs/plans/2026-11-10-lens-core-migration-map.md`](docs/plans/2026-11-10-lens-core-migration-map.md).
 
-1. **The standard** — the shared database shape every lab uses
-   (`candidates → decisions → verified`, plus lineage and oversight). See
-   [`docs/schema/spine.sql`](docs/schema/spine.sql).
-2. **The composition** — how the modules snap together into a runnable lab.
-3. **The launcher** — `lens-core` stands up a new lab against a database you point it at.
+## Now
+There is no runnable code here yet. The earlier Lens database standard and launcher moved out
+on 2026-11-10:
+- to the project knowledge graph (standard 0.3.0);
+- to the adaptive engine (the trust tables).
 
-## The modules (each its own repo + PyPI launcher)
+Next comes the interface itself:
+1. the web dashboard and observatory console arrive from coordination;
+2. the review screens are built against the project knowledge graph's contracts;
+3. the settings model.
 
-| Module | Role |
-|---|---|
-| **lens-core** (here) | the standard + composition + launcher |
-| **lens-ingest** | source material → staged candidate records |
-| **lens-review** | human accept/reject/edit → promote to the verified library |
-| **lens-serve** | query the verified library (API + MCP) |
-| **lens-observe** | signals over activity (active / orphaned / degrading / blind) |
+It is built to the base-module standard 0.2 (hcs-decomposition).
 
-Modules are **mix-and-match**: a lab uses the ones it needs. `lens-observe` is shared
-with the platform observation layer (two distinct observatories, one module library).
+## Rules
+- **The observatory owns no data store.** It reads and sends only through the owning
+  modules' contracts.
+- **This repo is public.** No user data, live-service details, keys or security findings.
 
-## Launch (stub)
+Formerly `lens-core`, the main repo of "The Lens", decomposed from the PROVES reference system.
+That history is precedent, not identity.
 
-```bash
-pip install lens-core        # once published
-lens-core --help
-```
-
-Connection is **injected** (`LENS_DB_URL` in your environment) — never hardcoded.
-See [`.env.example`](.env.example).
-
-## Identity
-
-This repo has a [`CHARTER.md`](CHARTER.md) — its core directive and its boundary
-within The Lens. Read it first. Precedent (how PROVES/Tapestry did it before) is
-*guidance*, not this repo's identity.
-
-## Status
-
-Scaffold, 2026-09-26. Neutral/open. No proprietary source data.
-
-## The Lens — related repositories
-
-Part of **The Lens** — a modular, nearly-decomposable kit for systems discovery. Each repo stands on its own; together they compose a lab (a systems observatory).
-
-- [lens-core](https://github.com/Lizo-RoadTown/lens-core) — main lab repo: shared standard + composition + launcher  **(this repo)**
-- [lens-ingest](https://github.com/Lizo-RoadTown/lens-ingest) — intake: source material into staged candidate records
-- [lens-review](https://github.com/Lizo-RoadTown/lens-review) — review: human accept/reject/edit; promote to the verified library
-- [lens-serve](https://github.com/Lizo-RoadTown/lens-serve) — serve: query the verified library (API + MCP)
-- [lens-observe](https://github.com/Lizo-RoadTown/lens-observe) — observe: signals over activity (active / orphaned / degrading / blind)
-
-The decomposition method, the case records of how The Lens was made from PROVES, and the
-lens-log plugin live in [**Surveyor**](https://github.com/Lizo-RoadTown/surveyor), the decomposition component.
+Apache-2.0.

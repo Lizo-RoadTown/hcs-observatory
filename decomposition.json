@@ -8,7 +8,6 @@
   ],
   "surfaces": [
     {"name": "source", "paths": ["@sources"], "on": "read-or-write", "entry": "process"},
-    {"name": "bus", "paths": ["docs/schema/**"], "on": "write", "entry": "decision"},
     {"name": "identity", "paths": ["CHARTER.md", "CLAUDE.md", "docs/BUILD.md"], "on": "write", "entry": "decision"},
     {"name": "definition", "paths": ["decomposition.json"], "on": "write", "entry": "decision"},
     {"name": "skills", "paths": ["skills/**", "SKILLS.md"], "on": "write", "entry": "skill"},

@@ -36,9 +36,8 @@ coordination (the executor).
 - **You own:** the interface apps, the settings model and its routing.
 - **You do not own any data store.** A person's learner profile lives in memory; you show it
   and let the person correct it, and you hold no copy.
-- **In transition:** a frozen copy of the old spine (`docs/schema/spine.sql`) and its launcher
-  stay here only until the oversight tables move to the adaptive engine (H5). Do not extend
-  them. Plans: `docs/plans/2026-11-10-lens-core-migration-map.md`.
+- The old spine and launcher moved out on 2026-11-10: to the project knowledge graph (H1, H2)
+  and to the adaptive engine (H5, the trust tables).
 
 ## Scope and privacy
 - Personal and project scopes are separate.

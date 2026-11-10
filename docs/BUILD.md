@@ -1,5 +1,9 @@
 # lens-core — directions for building yourself out
 
+> **Historical (2026-11-10).** This file describes the old Lens role (standard, composition,
+> launcher), which has moved out. The current identity is [`../CHARTER.md`](../CHARTER.md); the
+> current plan is [`plans/2026-11-10-lens-core-migration-map.md`](plans/2026-11-10-lens-core-migration-map.md).
+
 This is not a spec. It orients you: how decomposition works, which piece you are,
 where the source is, and the constraints that hold. You derive what to build by
 working the source.
