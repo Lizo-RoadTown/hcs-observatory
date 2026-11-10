@@ -9,7 +9,7 @@ by the log-index workflow (daily, on demand, and on push to lens-core).
 
 | module | commit |
 |---|---|
-| lens-core | 51c2b50 |
+| lens-core | 6d5b860 |
 | lens-ingest | 4f44a63 |
 | lens-observe | e3f5ccd |
 | lens-review | 98969f7 |
@@ -39,6 +39,7 @@ logging began. Usually a shell edit, or an entry committed separately; check eac
 | lens-core | b553c89 | Migration map: correct spine version (QuickPrime 0.3.0); drop bus rather than move it | docs/plans/2026-11-10-lens-core-migration-map.md |
 | lens-core | 9ab7de3 | Migration map: live dashboard is the-loom's copy; keep spine CI until it moves; name the first closed loop | docs/plans/2026-11-10-lens-core-migration-map.md |
 | lens-core | 51c2b50 | Migration map: settings enforcement per education-lab; profile lives in Loom_MCP, no copy here | docs/plans/2026-11-10-lens-core-migration-map.md |
+| lens-core | 6d5b860 | Docs: interface home is this repo (hcs-observatory); H1 version and PR #1 merged | docs/architecture/target-architecture.md, docs/plans/2026-11-09-lens-core-handoffs.md |
 
 ## Misses
 
