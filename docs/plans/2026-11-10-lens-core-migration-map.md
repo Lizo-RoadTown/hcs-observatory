@@ -16,7 +16,8 @@ review and controls across the system, for both personal and project scopes. It 
 
 | Piece | To | Condition and order |
 |---|---|---|
-| Spine 0.2.0 (without oversight), launcher, their tests and the `bus` field | QuickPrime (H1, H2) | QuickPrime PR #1 merged (it is **open**), then H5, then lens-core drops its copy |
+| Spine (lens-core 0.2.0 → QuickPrime standard 0.3.0, without oversight), launcher, their tests and wheel config | QuickPrime (H1, H2) | QuickPrime PR #1 merged (it is **open**), then H5, then lens-core drops its copy |
+| `bus` field and the `bus` surface in `decomposition.json` | **dropped, not moved** | in the same commit that drops `spine.sql`. Under the settled homes the spine is QuickPrime's private store, read only through contracts B and C, so it is no longer a shared bus. QuickPrime tracks schema changes through its own `standard` surface |
 | Oversight tables (`oversight_*`) | education-lab (H5) | after QuickPrime PR #1; before lens-core drops `spine.sql` |
 | Roadmap, its checker, test and CI step | Tapestry (H3) | after H6; lens-core's CI keeps running the tests that stay until they move |
 | Log index, its test and workflow | Surveyor (H4) | after H6; adapted per Surveyor's proposal (nested role for education-lab; QuickPrime and Loom_MCP declarations) |
@@ -88,7 +89,7 @@ enforces it:
 2. **lens-core:** one commit that flips its `decomposition.json` to a piece and removes the
    roadmap and log-index files.
 3. **After QuickPrime PR #1 merges:** H5 (oversight to education-lab), then lens-core drops the
-   spine, launcher and their tests.
+   spine, launcher and their tests, plus the `bus` field and surface, in one commit.
 4. **After the settings contract (P0 item 3) is accepted:** build the settings and controls area.
 5. **Before or after P3, not during:** move the web dashboard (Vercel source repoint), then the
    console (with the redirect).
