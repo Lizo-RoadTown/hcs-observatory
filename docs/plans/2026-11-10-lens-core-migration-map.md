@@ -46,17 +46,24 @@ review and controls across the system, for both personal and project scopes. It 
 Tapestry drafted the format as provisional starter, and education-lab proposed fields (cooldown,
 arbiter, retention). lens-core takes ownership. Each setting is routed to the module that
 enforces it:
-- the engine: attention and adaptation;
-- Tapestry: authority and execution;
-- Loom_MCP and QuickPrime: access to their data.
+- **the engine:**
+  - attention: watch, cadence, depth, notify;
+  - adaptation: enabled domains, thresholds, skill creation (proposal-only), acceptance check
+    required, cooldown days, the arbiter;
+- **Tapestry's executor:** authority and execution, defaulting to approval required;
+- **Loom_MCP and QuickPrime:** access to their data, including retention days on stored signals.
+
+Open: whether retention also covers the engine's own state. If it does, the settings model must
+say so; the engine will honour it.
 
 **lens-core consumes, never bypasses:**
 - **QuickPrime B (graph reads) and C (review decisions):** through QuickPrime's API under
   lens-core's own role, **never the database** (QuickPrime conflict 2). The review actor comes
   from the user's token.
 - **Loom_MCP:** inspect and manage memory, through its read API. A personal scope shows only
-  that person's memory. The personal learner profile is a section the person can see and
-  correct.
+  that person's memory. The personal learner profile lives in Loom_MCP as the person's own
+  memory section. lens-core shows it and lets the person correct it, and **holds no copy**. The
+  engine reads it only under a scoped credential, which Loom_MCP has yet to design.
 - **The engine:** findings and proposals, read; attention and adaptation settings, sent.
 - **Tapestry:** status, approvals and execution settings. Approvals carry the approver from the
   token.
